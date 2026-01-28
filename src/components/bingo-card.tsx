@@ -4,14 +4,13 @@ import { Check } from 'lucide-react';
 
 interface BingoCardProps {
   card: (number | string)[];
-  markedCells: { row: number; col: number }[];
   onMark: (row: number, col: number) => void;
   calledItems: (number | string)[];
   gridSize: 3 | 4 | 5;
   isMyTurn: boolean;
 }
 
-export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gridSize, isMyTurn }: BingoCardProps) {
+export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyTurn }: BingoCardProps) {
   const gridClasses = {
     3: 'grid-cols-3',
     4: 'grid-cols-4',
@@ -29,12 +28,12 @@ export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gr
     <div className={`grid ${gridClasses[gridSize]} gap-1.5 md:gap-2 p-2 md:p-4 bg-primary/10 rounded-lg shadow-inner`}>
       {card.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
-          const isMarked = markedCells.some(mc => mc.row === rowIndex && mc.col === colIndex);
           const isCalled = calledItems.includes(cell);
           const isFreeSpace = cell === 'FREE';
+          const isMarked = isCalled || isFreeSpace;
           
-          const isClickable = isCalled || isMyTurn;
-          const isDisabled = isFreeSpace || !isClickable;
+          const isClickableToCall = isMyTurn && !isCalled && !isFreeSpace;
+          const isDisabled = !isClickableToCall && !isFreeSpace;
 
           return (
             <button
@@ -42,14 +41,14 @@ export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gr
               disabled={isDisabled}
               onClick={() => onMark(rowIndex, colIndex)}
               className={cn(
-                "relative flex items-center justify-center aspect-square rounded-md transition-all duration-300 ease-in-out transform hover:scale-105",
+                "relative flex items-center justify-center aspect-square rounded-md transition-all duration-300 ease-in-out transform",
                 "text-lg md:text-2xl font-bold",
                 gridSize === 5 && "text-base md:text-xl",
                 gridSize === 3 && "text-xl md:text-3xl",
                 isFreeSpace ? "bg-accent text-accent-foreground" : "bg-card shadow-sm",
-                isCalled && !isFreeSpace && "bg-accent/30",
-                isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner",
-                isDisabled && !isFreeSpace && "cursor-not-allowed opacity-50"
+                isMarked && !isFreeSpace && "bg-primary text-primary-foreground scale-95 shadow-inner",
+                isClickableToCall && "cursor-pointer hover:scale-105 hover:ring-2 hover:ring-primary",
+                isDisabled && !isMarked && "cursor-not-allowed opacity-50"
               )}
             >
               {isMarked && !isFreeSpace && (

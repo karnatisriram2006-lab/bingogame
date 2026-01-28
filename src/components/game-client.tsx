@@ -77,87 +77,47 @@ export function GameClient({ roomId }: { roomId: string }) {
   const handleCellClick = async (row: number, col: number) => {
     if (!user || !currentPlayer || !room || room.status !== 'playing') return;
 
-    const card = currentPlayer.card;
-    const gridSize = room.gridSize;
-    const cellValue = card[row * gridSize + col];
-
+    const cellValue = currentPlayer.card[row * room.gridSize + col];
     if (cellValue === 'FREE') return;
 
     const isMyTurn = user.uid === room.currentPlayerTurn;
     const isCalled = room.calledItems.includes(cellValue);
 
-    // Case 1: It's my turn and the number hasn't been called yet.
-    // ACTION: Call the number for the room.
     if (isMyTurn && !isCalled) {
-        const playerOrder = room.playerOrder || Object.keys(room.players);
+        const playerOrder = room.playerOrder!;
         const currentPlayerIndex = playerOrder.indexOf(room.currentPlayerTurn!);
         const nextPlayerIndex = (currentPlayerIndex + 1) % playerOrder.length;
         const nextPlayerId = playerOrder[nextPlayerIndex];
-
-        // Also automatically mark the cell for the player who called it.
-        const newMarkedCells = currentPlayer.markedCells.some(cell => cell.row === row && cell.col === col)
-            ? currentPlayer.markedCells
-            : [...currentPlayer.markedCells, { row, col }];
 
         const roomRef = doc(db, 'rooms', roomId);
         await updateDoc(roomRef, {
             calledItems: [...room.calledItems, cellValue],
             currentItem: cellValue,
             currentPlayerTurn: nextPlayerId,
-            [`players.${user.uid}.markedCells`]: newMarkedCells,
         });
-        return; // Action complete
-    }
-    
-    // Case 2: The number has already been called.
-    // ACTION: Any player can mark/unmark it on their card at any time.
-    if (isCalled) {
-        const isAlreadyMarked = currentPlayer.markedCells.some(cell => cell.row === row && cell.col === col);
-        const newMarkedCells = isAlreadyMarked
-            ? currentPlayer.markedCells.filter(cell => !(cell.row === row && cell.col === col))
-            : [...currentPlayer.markedCells, { row, col }];
-        
-        const roomRef = doc(db, 'rooms', roomId);
-        await updateDoc(roomRef, {
-          [`players.${user.uid}.markedCells`]: newMarkedCells
-        });
-        return; // Action complete
-    }
-
-    // Case 3: It's not my turn and the number is not called.
-    // ACTION: Show a message. The button should be disabled, but this is a safeguard.
-    if (!isMyTurn && !isCalled) {
-        toast({ variant: 'destructive', title: 'Not so fast!', description: "This item hasn't been called yet, and it's not your turn." });
+    } else if (!isMyTurn) {
+        toast({ variant: 'destructive', title: 'Not your turn!', description: "Please wait for your turn to call an item." });
     }
   };
 
   const handleBingo = async () => {
     if (!user || !room || !currentPlayer) return;
 
-    const card: (number | string)[][] = [];
-    if (currentPlayer.card.length) {
-      for (let i = 0; i < room.gridSize; i++) {
-        card.push(currentPlayer.card.slice(i * room.gridSize, (i + 1) * room.gridSize));
-      }
-    }
+    const flatCard = currentPlayer.card;
+    const gridSize = room.gridSize;
 
-    // Step 1: Verify all marked cells are valid (have been called)
-    const invalidMarks = currentPlayer.markedCells.filter(({ row, col }) => {
-      const cellValue = card[row][col];
-      return cellValue !== 'FREE' && !room.calledItems.includes(cellValue);
+    // Generate the list of marked cells based on the called items.
+    const currentMarkedCells: { row: number, col: number }[] = [];
+    flatCard.forEach((cellValue, index) => {
+        if (cellValue === 'FREE' || room.calledItems.includes(cellValue)) {
+            currentMarkedCells.push({
+                row: Math.floor(index / gridSize),
+                col: index % gridSize,
+            });
+        }
     });
 
-    if (invalidMarks.length > 0) {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid Marks',
-        description: "You've marked numbers that haven't been called yet.",
-      });
-      return;
-    }
-
-    // Step 2: Check for a winning condition
-    const winPatterns = checkWin(currentPlayer.card, currentPlayer.markedCells, room.gridSize);
+    const winPatterns = checkWin(currentPlayer.card, currentMarkedCells, room.gridSize);
     let isWin = false;
 
     switch (room.winCondition) {
@@ -169,8 +129,7 @@ export function GameClient({ roomId }: { roomId: string }) {
         break;
       case 'full_house':
         const totalSquares = room.gridSize * room.gridSize;
-        const freeSpaces = currentPlayer.card.filter(c => c === 'FREE').length;
-        isWin = currentPlayer.markedCells.length >= totalSquares - freeSpaces;
+        isWin = currentMarkedCells.length >= totalSquares;
         break;
     }
 
@@ -203,7 +162,6 @@ export function GameClient({ roomId }: { roomId: string }) {
             ...p,
             ready: p.isHost,
             card: generateBingoCard(newGameItems, room.gridSize),
-            markedCells: [],
             isWinner: false,
         };
     }
@@ -291,7 +249,7 @@ export function GameClient({ roomId }: { roomId: string }) {
               </div>
           )}
           
-          {currentPlayer && <BingoCard card={currentPlayer.card} markedCells={currentPlayer.markedCells} onMark={handleCellClick} calledItems={room.calledItems} gridSize={room.gridSize} isMyTurn={user?.uid === room.currentPlayerTurn} />}
+          {currentPlayer && <BingoCard card={currentPlayer.card} onMark={handleCellClick} calledItems={room.calledItems} gridSize={room.gridSize} isMyTurn={user?.uid === room.currentPlayerTurn} />}
           
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
             <Button size="lg" variant="destructive" onClick={handleBingo} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg" disabled={room.status === 'finished'}>

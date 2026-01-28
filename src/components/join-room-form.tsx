@@ -57,7 +57,6 @@ export function JoinRoomForm({ onRoomJoined }: JoinRoomFormProps) {
         isHost: false,
         ready: false,
         card: generateBingoCard(roomData.gameItems, roomData.gridSize),
-        markedCells: [],
         score: 0,
         isWinner: false,
       };

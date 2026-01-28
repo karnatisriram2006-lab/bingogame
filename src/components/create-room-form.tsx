@@ -58,7 +58,6 @@ export function CreateRoomForm({ onRoomCreated }: CreateRoomFormProps) {
       isHost: true,
       ready: true,
       card: generateBingoCard(gameItems, gridSize),
-      markedCells: [],
       score: 0,
       isWinner: false,
     };
