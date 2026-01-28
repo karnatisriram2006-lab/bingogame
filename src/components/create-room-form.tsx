@@ -76,7 +76,8 @@ export function CreateRoomForm({ onRoomCreated }: CreateRoomFormProps) {
       createdAt: serverTimestamp(),
       players: {
         [user.uid]: hostPlayer
-      }
+      },
+      messages: [],
     };
     
     if (gameType === 'words') {

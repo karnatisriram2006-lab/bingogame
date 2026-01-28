@@ -16,6 +16,7 @@ import { WinnerPopup } from '@/components/winner-popup';
 import { checkWin, generateBingoCard, generateGameItems } from '@/lib/bingo-logic';
 import { Loader2, Copy } from 'lucide-react';
 import { Separator } from './ui/separator';
+import { Chat } from './chat';
 
 export function GameClient({ roomId }: { roomId: string }) {
   const [room, setRoom] = useState<Room | null>(null);
@@ -160,6 +161,7 @@ export function GameClient({ roomId }: { roomId: string }) {
         gameItems: newGameItems,
         playerOrder: deleteField(),
         currentPlayerTurn: deleteField(),
+        messages: [],
     });
   };
 
@@ -293,13 +295,19 @@ export function GameClient({ roomId }: { roomId: string }) {
           </div>
         </main>
         
-        <aside className="lg:col-span-1 order-3 rounded-lg bg-card p-4 shadow-sm">
-            <h3 className="text-lg font-bold mb-4">Players</h3>
-            <PlayerList players={Object.values(room.players)} currentPlayerTurnId={room.currentPlayerTurn} />
-            <Separator className="my-4" />
-            <Button variant="outline" className="w-full" onClick={copyLink}>
-                <Copy className="mr-2 h-4 w-4" /> Share Link
-            </Button>
+        <aside className="lg:col-span-1 order-3 rounded-lg bg-card p-4 shadow-sm flex flex-col gap-4">
+            <div>
+                <h3 className="text-lg font-bold mb-4">Players</h3>
+                <PlayerList players={Object.values(room.players)} currentPlayerTurnId={room.currentPlayerTurn} />
+                <Separator className="my-4" />
+                <Button variant="outline" className="w-full" onClick={copyLink}>
+                    <Copy className="mr-2 h-4 w-4" /> Share Link
+                </Button>
+            </div>
+            <Separator />
+            <div className="flex-1 min-h-[24rem]">
+                <Chat roomId={roomId} messages={room.messages || []} />
+            </div>
         </aside>
       </div>
     </div>

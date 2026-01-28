@@ -21,6 +21,14 @@ export type GameMode = 'numbers' | 'words';
 export type WinCondition = '1_line' | '2_lines' | 'full_house';
 export type GridSize = 3 | 4 | 5;
 
+export type ChatMessage = {
+  id: string;
+  senderId: string;
+  senderName: string;
+  text: string;
+  timestamp: Timestamp;
+};
+
 export type Room = {
   id: string;
   code: string;
@@ -38,4 +46,5 @@ export type Room = {
   players: Record<string, Player>;
   playerOrder?: string[];
   currentPlayerTurn?: string;
+  messages?: ChatMessage[];
 };
