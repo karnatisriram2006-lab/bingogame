@@ -17,6 +17,7 @@ import { checkWin, generateBingoCard, generateGameItems } from '@/lib/bingo-logi
 import { Loader2, Copy } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Chat } from './chat';
+import { cn } from '@/lib/utils';
 
 export function GameClient({ roomId }: { roomId: string }) {
   const [room, setRoom] = useState<Room | null>(null);
@@ -280,8 +281,16 @@ export function GameClient({ roomId }: { roomId: string }) {
           </div>
 
           {room.status === 'playing' && room.currentPlayerTurn && (
-              <div className="text-center w-full max-w-md p-3 bg-secondary/50 rounded-lg">
-                  <p className="font-bold text-lg">
+              <div className={cn(
+                "text-center w-full max-w-md p-3 rounded-lg transition-colors duration-300",
+                user?.uid === room.currentPlayerTurn 
+                    ? 'bg-accent animate-pulse' 
+                    : 'bg-secondary/50'
+              )}>
+                  <p className={cn(
+                      "font-bold text-lg",
+                      user?.uid === room.currentPlayerTurn && 'text-accent-foreground'
+                  )}>
                       {user?.uid === room.currentPlayerTurn ? "It's your turn to call a number!" : `Waiting for ${room.players[room.currentPlayerTurn]?.name || 'a player'}...`}
                   </p>
               </div>
