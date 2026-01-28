@@ -6,6 +6,6 @@ type RoomPageProps = {
   };
 };
 
-export default function RoomPage({ params }: RoomPageProps) {
+export default async function RoomPage({ params }: RoomPageProps) {
   return <GameClient roomId={params.roomId} />;
 }
