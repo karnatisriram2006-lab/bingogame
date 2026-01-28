@@ -29,7 +29,7 @@ export function PlayerList({ players, currentPlayerTurnId }: PlayerListProps) {
             </Avatar>
             <div className='flex-grow'>
                 <span className="font-medium text-sm">{player.name}</span>
-                <p className="text-xs text-muted-foreground">Score: {player.score}</p>
+                <p className="text-sm font-medium text-muted-foreground">Score: <span className="text-foreground font-bold">{player.score}</span></p>
             </div>
           </div>
           <div className="flex items-center gap-2">

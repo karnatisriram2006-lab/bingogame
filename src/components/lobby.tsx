@@ -62,7 +62,7 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                         </Avatar>
                         <div>
                             <span className="font-medium">{player.name}</span>
-                            <div className="text-xs text-muted-foreground">Score: {player.score}</div>
+                            <p className="text-sm font-medium text-muted-foreground">Score: <span className="text-foreground font-bold">{player.score}</span></p>
                         </div>
                         {player.isHost && <Crown className="h-5 w-5 text-yellow-500" />}
                     </div>

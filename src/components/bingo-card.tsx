@@ -29,7 +29,10 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
   }
 
   return (
-    <div className={`grid ${gridClasses[gridSize]} gap-1.5 md:gap-2 p-2 md:p-4 bg-primary/10 rounded-lg shadow-inner`}>
+    <div className={cn(
+      `grid ${gridClasses[gridSize]} bg-primary/10 rounded-lg shadow-inner w-full max-w-md md:max-w-lg lg:max-w-xl`,
+      gridSize > 5 ? "gap-1 p-1 md:p-2" : "gap-1.5 md:gap-2 p-2 md:p-4"
+    )}>
       {card.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           const isCalled = calledItems.includes(cell);
@@ -49,8 +52,8 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
                 gridSize <= 3 ? "text-xl md:text-3xl" :
                 gridSize <= 4 ? "text-lg md:text-2xl" :
                 gridSize <= 5 ? "text-base md:text-xl" :
-                gridSize <= 6 ? "text-sm md:text-lg" :
-                gridSize <= 8 ? "text-xs md:text-base" :
+                gridSize <= 7 ? "text-sm md:text-lg" :
+                gridSize <= 9 ? "text-xs md:text-base" :
                 "text-[10px] md:text-xs",
                 isFreeSpace ? "bg-accent text-accent-foreground" : "bg-card shadow-sm",
                 isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner",
