@@ -15,14 +15,14 @@ export default function RoomLoading() {
         </div>
 
         {/* Center Column: Game Area */}
-        <div className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center">
-          <Skeleton className="h-24 w-48 mb-6" />
-          <div className="grid grid-cols-5 gap-2 p-4 bg-muted/50 rounded-lg">
+        <div className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center gap-4">
+          <Skeleton className="h-20 w-40" />
+          <div className="grid grid-cols-5 gap-2 p-4 bg-muted/50 rounded-lg w-full max-w-lg">
              {[...Array(25)].map((_, i) => (
-                <Skeleton key={i} className="h-16 w-16 md:h-20 md:w-20 rounded-md" />
+                <Skeleton key={i} className="aspect-square w-full rounded-md" />
              ))}
           </div>
-           <Skeleton className="h-12 w-48 mt-8" />
+           <Skeleton className="h-12 w-48" />
         </div>
 
         {/* Right Column: Players */}

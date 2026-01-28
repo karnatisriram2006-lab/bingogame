@@ -30,7 +30,7 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
 
   return (
     <div className={cn(
-      `grid ${gridClasses[gridSize]} bg-primary/10 rounded-lg shadow-inner w-full max-w-md md:max-w-lg lg:max-w-xl`,
+      `grid ${gridClasses[gridSize]} bg-primary/10 rounded-lg shadow-inner w-full max-w-md md:max-w-lg`,
       gridSize > 7 ? "gap-1 p-1" : gridSize > 4 ? "gap-1.5 p-1.5 md:p-2" : "gap-2 p-2 md:p-4"
     )}>
       {card.map((row, rowIndex) =>

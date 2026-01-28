@@ -273,10 +273,10 @@ export function GameClient({ roomId }: { roomId: string }) {
           <CalledItems items={room.calledItems} />
         </aside>
 
-        <main className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center gap-6">
+        <main className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center gap-4">
           <div className="text-center">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Called</h2>
-            <p className="text-6xl md:text-8xl font-black text-primary animate-pulse">{room.currentItem || '...'}</p>
+            <p className="text-5xl md:text-7xl font-black text-primary animate-pulse">{room.currentItem || '...'}</p>
           </div>
 
           {room.status === 'playing' && room.currentPlayerTurn && (
@@ -289,7 +289,7 @@ export function GameClient({ roomId }: { roomId: string }) {
           
           {currentPlayer && <BingoCard card={currentPlayer.card} onMark={handleCellClick} calledItems={room.calledItems} gridSize={room.gridSize} isMyTurn={user?.uid === room.currentPlayerTurn} />}
           
-          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
+          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
             <Button size="lg" variant="destructive" onClick={handleBingo} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg" disabled={room.status === 'finished'}>
                 BINGO!
             </Button>
