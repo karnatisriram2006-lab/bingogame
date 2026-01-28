@@ -46,5 +46,5 @@ export type Room = {
   players: Record<string, Player>;
   playerOrder?: string[];
   currentPlayerTurn?: string;
-  messages?: ChatMessage[];
+  messages: ChatMessage[];
 };

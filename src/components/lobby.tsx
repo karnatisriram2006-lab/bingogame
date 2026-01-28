@@ -9,6 +9,7 @@ import { Separator } from './ui/separator';
 import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Input } from './ui/input';
+import { Chat } from './chat';
 
 interface LobbyProps {
   room: Room;
@@ -31,7 +32,7 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
     }, [room.customWords]);
 
   return (
-    <div className="container mx-auto max-w-3xl py-12">
+    <div className="container mx-auto max-w-5xl py-12">
       <Card className="shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">Lobby</CardTitle>
@@ -47,72 +48,77 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
             </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-center mb-4">Players ({players.length})</h3>
-            <div className="space-y-3">
-              {players.map((player) => (
-                <div key={player.id} className="flex items-center justify-between rounded-lg border bg-background p-3">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src={`https://api.dicebear.com/8.x/initials/svg?seed=${player.name}`} />
-                      <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium">{player.name}</span>
-                    {player.isHost && <Crown className="h-5 w-5 text-yellow-500" />}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {player.ready ? (
-                      <div className="flex items-center gap-2 text-green-500">
-                        <CheckCircle className="h-5 w-5" />
-                        <span>Ready</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Circle className="h-5 w-5" />
-                        <span>Not Ready</span>
-                      </div>
-                    )}
-                    {isHost && !player.isHost && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 rounded-full text-destructive/70 hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => onRemovePlayer(player.id)}
-                            >
-                              <UserX className="h-4 w-4" />
-                              <span className="sr-only">Remove {player.name}</span>
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Remove {player.name}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )}
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex flex-col gap-4">
+                <h3 className="text-lg font-semibold text-center">Players ({players.length})</h3>
+                <div className="space-y-3">
+                {players.map((player) => (
+                    <div key={player.id} className="flex items-center justify-between rounded-lg border bg-background p-3">
+                    <div className="flex items-center gap-3">
+                        <Avatar>
+                        <AvatarImage src={`https://api.dicebear.com/8.x/initials/svg?seed=${player.name}`} />
+                        <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium">{player.name}</span>
+                        {player.isHost && <Crown className="h-5 w-5 text-yellow-500" />}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {player.ready ? (
+                        <div className="flex items-center gap-2 text-green-500">
+                            <CheckCircle className="h-5 w-5" />
+                            <span>Ready</span>
+                        </div>
+                        ) : (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <Circle className="h-5 w-5" />
+                            <span>Not Ready</span>
+                        </div>
+                        )}
+                        {isHost && !player.isHost && (
+                        <TooltipProvider>
+                            <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-full text-destructive/70 hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => onRemovePlayer(player.id)}
+                                >
+                                <UserX className="h-4 w-4" />
+                                <span className="sr-only">Remove {player.name}</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Remove {player.name}</p>
+                            </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                        )}
+                    </div>
+                    </div>
+                ))}
                 </div>
-              ))}
-            </div>
 
-            <div className="pt-6 flex flex-col items-center gap-4">
-              {isHost ? (
-                <Button size="lg" onClick={onStart} disabled={!allReady} className="w-full sm:w-auto">
-                  <Play className="mr-2 h-5 w-5"/>
-                  {players.length > 1 && !allReady ? 'Waiting for players...' : 'Start Game'}
-                </Button>
-              ) : (
-                <Button size="lg" onClick={onReady} className="w-full sm:w-auto">
-                    {currentPlayer?.ready ? "I'm not ready" : "I'm Ready!"}
-                </Button>
-              )}
+                <div className="pt-6 flex flex-col items-center gap-4">
+                {isHost ? (
+                    <Button size="lg" onClick={onStart} disabled={!allReady} className="w-full sm:w-auto">
+                    <Play className="mr-2 h-5 w-5"/>
+                    {players.length > 1 && !allReady ? 'Waiting for players...' : 'Start Game'}
+                    </Button>
+                ) : (
+                    <Button size="lg" onClick={onReady} className="w-full sm:w-auto">
+                        {currentPlayer?.ready ? "I'm not ready" : "I'm Ready!"}
+                    </Button>
+                )}
+                </div>
+            </div>
+            <div className="h-[32rem]">
+                <Chat roomId={room.id} messages={room.messages} />
             </div>
           </div>
           {isHost && (
             <>
-                <Separator className="my-6" />
+                <Separator className="my-8" />
                 <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-center flex items-center justify-center gap-2">
                         <Settings className="h-5 w-5"/>
