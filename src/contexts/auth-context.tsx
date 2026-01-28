@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        localStorage.removeItem('bingo-guest-user'); // Ensure guest session is cleared
+        sessionStorage.removeItem('bingo-guest-user'); // Ensure guest session is cleared
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
@@ -41,17 +41,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(newUser);
         }
       } else {
-        // No firebase user, check for a guest user in localStorage
+        // No firebase user, check for a guest user in sessionStorage
         try {
-          const storedGuest = localStorage.getItem('bingo-guest-user');
+          const storedGuest = sessionStorage.getItem('bingo-guest-user');
           if (storedGuest) {
             setUser(JSON.parse(storedGuest));
           } else {
             setUser(null);
           }
         } catch (error) {
-          console.error("Failed to parse guest user from localStorage", error);
-          localStorage.removeItem('bingo-guest-user');
+          console.error("Failed to parse guest user from sessionStorage", error);
+          sessionStorage.removeItem('bingo-guest-user');
           setUser(null);
         }
       }
@@ -80,14 +80,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       photoURL: `https://api.dicebear.com/8.x/initials/svg?seed=${username}`,
       isGuest: true,
     };
-    localStorage.setItem('bingo-guest-user', JSON.stringify(guestUser));
+    sessionStorage.setItem('bingo-guest-user', JSON.stringify(guestUser));
     setUser(guestUser);
     setLoading(false);
   };
 
   const signOut = async () => {
     if (user?.isGuest) {
-      localStorage.removeItem('bingo-guest-user');
+      sessionStorage.removeItem('bingo-guest-user');
       setUser(null);
     } else {
       await firebaseSignOut(auth);
