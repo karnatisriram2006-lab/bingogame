@@ -24,33 +24,28 @@ export function generateGameItems(gridSize: GridSize, gameType: GameMode, custom
         }
     }
 
-    // Shuffle the main source pool
+    // Shuffle the main source pool to prepare for sampling
     for (let i = sourcePool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [sourcePool[i], sourcePool[j]] = [sourcePool[j], sourcePool[i]];
     }
     
-    // For numbers, we still take the full range but shuffled. For words, we take exactly the amount needed.
-    const gameSize = gameType === 'numbers' ? 75 : totalItems;
-
-    return sourcePool.slice(0, gameSize);
+    // Always take 'totalItems' for the game's cards from the shuffled source pool.
+    return sourcePool.slice(0, totalItems);
 }
 
 // MODIFIED function to generate a card from a pre-defined set of items.
 export function generateBingoCard(gameItems: (string | number)[], gridSize: GridSize): (number | string)[] {
-  const cardSize = gridSize * gridSize;
-  const itemsToShuffle = [...gameItems];
+  const cardItems = [...gameItems];
 
-  // Fisher-Yates shuffle
-  for (let i = itemsToShuffle.length - 1; i > 0; i--) {
+  // Fisher-Yates shuffle to randomize the layout for this specific player.
+  for (let i = cardItems.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [itemsToShuffle[i], itemsToShuffle[j]] = [itemsToShuffle[j], itemsToShuffle[i]];
+    [cardItems[i], cardItems[j]] = [cardItems[j], cardItems[i]];
   }
   
-  const cardItems = itemsToShuffle.slice(0, cardSize);
-
   if (gridSize % 2 !== 0) {
-    const centerIndex = Math.floor(cardSize / 2);
+    const centerIndex = Math.floor((gridSize * gridSize) / 2);
     cardItems[centerIndex] = 'FREE';
   }
   
