@@ -100,7 +100,7 @@ export function GameClient({ roomId }: { roomId: string }) {
 
   const handleBingo = async () => {
     if (!user || !room || !currentPlayer) return;
-    const win = checkWin(currentPlayer.card, currentPlayer.markedCells);
+    const win = checkWin(currentPlayer.card, currentPlayer.markedCells, room.gridSize);
     let isWin = false;
     switch(room.winCondition) {
         case '1_line': isWin = win.lines >= 1; break;

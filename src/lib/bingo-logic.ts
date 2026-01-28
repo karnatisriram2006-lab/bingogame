@@ -9,7 +9,7 @@ export function generateRoomCode(length: number = 5): string {
   return result;
 }
 
-export function generateBingoCard(gridSize: GridSize, gameType: GameMode, customWords?: string): (number | string)[][] {
+export function generateBingoCard(gridSize: GridSize, gameType: GameMode, customWords?: string): (number | string)[] {
   const card: (number | string)[][] = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
   
   if (gameType === 'numbers') {
@@ -42,13 +42,17 @@ export function generateBingoCard(gridSize: GridSize, gameType: GameMode, custom
     card[center][center] = 'FREE';
   }
 
-  return card;
+  return card.flat();
 }
 
 // NOTE: In a production app, this verification logic MUST run on the server
 // (e.g., a Firebase Cloud Function) to prevent cheating.
-export function checkWin(card: (number | string)[][], markedCells: { row: number, col: number }[]): { lines: number, isFullHouse: boolean } {
-    const gridSize = card.length;
+export function checkWin(flatCard: (number | string)[], markedCells: { row: number, col: number }[], gridSize: GridSize): { lines: number, isFullHouse: boolean } {
+    const card: (number | string)[][] = [];
+    for (let i = 0; i < gridSize; i++) {
+        card.push(flatCard.slice(i * gridSize, (i + 1) * gridSize));
+    }
+
     let lines = 0;
 
     const isMarked = (r: number, c: number) => markedCells.some(cell => cell.row === r && cell.col === c) || card[r][c] === 'FREE';
@@ -75,7 +79,7 @@ export function checkWin(card: (number | string)[][], markedCells: { row: number
         lines++;
     }
 
-    const isFullHouse = markedCells.length >= (gridSize * gridSize - (card.flat().includes('FREE') ? 1 : 0));
+    const isFullHouse = markedCells.length >= (gridSize * gridSize - (flatCard.includes('FREE') ? 1 : 0));
 
     return { lines, isFullHouse };
 }

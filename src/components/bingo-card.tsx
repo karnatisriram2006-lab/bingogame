@@ -3,19 +3,26 @@ import { cn } from "@/lib/utils";
 import { Check } from 'lucide-react';
 
 interface BingoCardProps {
-  card: (number | string)[][];
+  card: (number | string)[];
   markedCells: { row: number; col: number }[];
   onMark: (row: number, col: number) => void;
   calledItems: (number | string)[];
   gridSize: 3 | 4 | 5;
 }
 
-export function BingoCard({ card, markedCells, onMark, calledItems, gridSize }: BingoCardProps) {
+export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gridSize }: BingoCardProps) {
   const gridClasses = {
     3: 'grid-cols-3',
     4: 'grid-cols-4',
     5: 'grid-cols-5',
   };
+
+  const card: (number | string)[][] = [];
+  if (flatCard.length) {
+    for (let i = 0; i < gridSize; i++) {
+      card.push(flatCard.slice(i * gridSize, (i + 1) * gridSize));
+    }
+  }
 
   return (
     <div className={`grid ${gridClasses[gridSize]} gap-1.5 md:gap-2 p-2 md:p-4 bg-primary/10 rounded-lg shadow-inner`}>

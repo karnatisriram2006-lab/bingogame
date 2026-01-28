@@ -12,7 +12,7 @@ export type Player = {
   name: string;
   isHost: boolean;
   ready: boolean;
-  card: (string | number)[][];
+  card: (string | number)[];
   markedCells: { row: number, col: number }[];
   score: number;
   isWinner: boolean;
