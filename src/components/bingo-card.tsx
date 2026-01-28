@@ -8,9 +8,10 @@ interface BingoCardProps {
   onMark: (row: number, col: number) => void;
   calledItems: (number | string)[];
   gridSize: 3 | 4 | 5;
+  isMyTurn: boolean;
 }
 
-export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gridSize }: BingoCardProps) {
+export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gridSize, isMyTurn }: BingoCardProps) {
   const gridClasses = {
     3: 'grid-cols-3',
     4: 'grid-cols-4',
@@ -31,11 +32,14 @@ export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gr
           const isMarked = markedCells.some(mc => mc.row === rowIndex && mc.col === colIndex);
           const isCalled = calledItems.includes(cell);
           const isFreeSpace = cell === 'FREE';
+          
+          const isClickable = isCalled || isMyTurn;
+          const isDisabled = isFreeSpace || !isClickable;
 
           return (
             <button
               key={`${rowIndex}-${colIndex}`}
-              disabled={isFreeSpace}
+              disabled={isDisabled}
               onClick={() => onMark(rowIndex, colIndex)}
               className={cn(
                 "relative flex items-center justify-center aspect-square rounded-md transition-all duration-300 ease-in-out transform hover:scale-105",
@@ -44,7 +48,8 @@ export function BingoCard({ card: flatCard, markedCells, onMark, calledItems, gr
                 gridSize === 3 && "text-xl md:text-3xl",
                 isFreeSpace ? "bg-accent text-accent-foreground" : "bg-card shadow-sm",
                 isCalled && !isFreeSpace && "bg-accent/30",
-                isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner"
+                isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner",
+                isDisabled && !isFreeSpace && "cursor-not-allowed opacity-50"
               )}
             >
               {isMarked && !isFreeSpace && (

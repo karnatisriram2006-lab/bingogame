@@ -14,7 +14,7 @@ import { CalledItems } from '@/components/called-items';
 import { Button } from '@/components/ui/button';
 import { WinnerPopup } from '@/components/winner-popup';
 import { checkWin, generateBingoCard } from '@/lib/bingo-logic';
-import { Loader2, Copy, Mic } from 'lucide-react';
+import { Loader2, Copy } from 'lucide-react';
 import { Separator } from './ui/separator';
 
 export function GameClient({ roomId }: { roomId: string }) {
@@ -74,45 +74,61 @@ export function GameClient({ roomId }: { roomId: string }) {
     });
   };
   
-  const handleCallNext = async () => {
-    if (!room || room.status !== 'playing' || !user || user.uid !== room.currentPlayerTurn) return;
+  const handleCellClick = async (row: number, col: number) => {
+    if (!user || !currentPlayer || !room || room.status !== 'playing') return;
+
+    const card = currentPlayer.card;
+    const gridSize = room.gridSize;
+    const cellValue = card[row * gridSize + col];
+
+    if (cellValue === 'FREE') return;
+
+    const isMyTurn = user.uid === room.currentPlayerTurn;
+    const isCalled = room.calledItems.includes(cellValue);
+
+    // Case 1: It's my turn and the number hasn't been called yet.
+    // ACTION: Call the number for the room.
+    if (isMyTurn && !isCalled) {
+        const playerOrder = room.playerOrder || Object.keys(room.players);
+        const currentPlayerIndex = playerOrder.indexOf(room.currentPlayerTurn!);
+        const nextPlayerIndex = (currentPlayerIndex + 1) % playerOrder.length;
+        const nextPlayerId = playerOrder[nextPlayerIndex];
+
+        // Also automatically mark the cell for the player who called it.
+        const newMarkedCells = currentPlayer.markedCells.some(cell => cell.row === row && cell.col === col)
+            ? currentPlayer.markedCells
+            : [...currentPlayer.markedCells, { row, col }];
+
+        const roomRef = doc(db, 'rooms', roomId);
+        await updateDoc(roomRef, {
+            calledItems: [...room.calledItems, cellValue],
+            currentItem: cellValue,
+            currentPlayerTurn: nextPlayerId,
+            [`players.${user.uid}.markedCells`]: newMarkedCells,
+        });
+        return; // Action complete
+    }
     
-    const allPossibleItems = room.gameType === 'numbers' 
-      ? Array.from({ length: 75 }, (_, i) => i + 1)
-      : room.customWords?.split(',').map(w => w.trim()).filter(Boolean) || [];
-      
-    const availableItems = allPossibleItems.filter(item => !room.calledItems.includes(item));
-    if (availableItems.length === 0) {
-        toast({ title: "All items have been called!" });
-        return;
+    // Case 2: The number has already been called.
+    // ACTION: Any player can mark/unmark it on their card at any time.
+    if (isCalled) {
+        const isAlreadyMarked = currentPlayer.markedCells.some(cell => cell.row === row && cell.col === col);
+        const newMarkedCells = isAlreadyMarked
+            ? currentPlayer.markedCells.filter(cell => !(cell.row === row && cell.col === col))
+            : [...currentPlayer.markedCells, { row, col }];
+        
+        const roomRef = doc(db, 'rooms', roomId);
+        await updateDoc(roomRef, {
+          [`players.${user.uid}.markedCells`]: newMarkedCells
+        });
+        return; // Action complete
     }
 
-    const nextItem = availableItems[Math.floor(Math.random() * availableItems.length)];
-    
-    const playerOrder = room.playerOrder || Object.keys(room.players);
-    const currentPlayerIndex = playerOrder.indexOf(room.currentPlayerTurn);
-    const nextPlayerIndex = (currentPlayerIndex + 1) % playerOrder.length;
-    const nextPlayerId = playerOrder[nextPlayerIndex];
-
-    const roomRef = doc(db, 'rooms', roomId);
-    await updateDoc(roomRef, {
-      calledItems: [...room.calledItems, nextItem],
-      currentItem: nextItem,
-      currentPlayerTurn: nextPlayerId,
-    });
-  };
-  
-  const handleMarkCell = async (row: number, col: number) => {
-    if (!user || !currentPlayer || room?.status !== 'playing') return;
-    const isAlreadyMarked = currentPlayer.markedCells.some(cell => cell.row === row && cell.col === col);
-    const newMarkedCells = isAlreadyMarked
-        ? currentPlayer.markedCells.filter(cell => !(cell.row === row && cell.col === col))
-        : [...currentPlayer.markedCells, { row, col }];
-    
-    const roomRef = doc(db, 'rooms', roomId);
-    await updateDoc(roomRef, {
-      [`players.${user.uid}.markedCells`]: newMarkedCells
-    });
+    // Case 3: It's not my turn and the number is not called.
+    // ACTION: Show a message. The button should be disabled, but this is a safeguard.
+    if (!isMyTurn && !isCalled) {
+        toast({ variant: 'destructive', title: 'Not so fast!', description: "This item hasn't been called yet, and it's not your turn." });
+    }
   };
 
   const handleBingo = async () => {
@@ -261,20 +277,14 @@ export function GameClient({ roomId }: { roomId: string }) {
           {room.status === 'playing' && room.currentPlayerTurn && (
               <div className="text-center w-full max-w-md p-3 bg-secondary/50 rounded-lg">
                   <p className="font-bold text-lg">
-                      {user?.uid === room.currentPlayerTurn ? "It's your turn to call!" : `Waiting for ${room.players[room.currentPlayerTurn]?.name || 'a player'} to call...`}
+                      {user?.uid === room.currentPlayerTurn ? "It's your turn to call a number!" : `Waiting for ${room.players[room.currentPlayerTurn]?.name || 'a player'}...`}
                   </p>
               </div>
           )}
           
-          {currentPlayer && <BingoCard card={currentPlayer.card} markedCells={currentPlayer.markedCells} onMark={handleMarkCell} calledItems={room.calledItems} gridSize={room.gridSize} />}
+          {currentPlayer && <BingoCard card={currentPlayer.card} markedCells={currentPlayer.markedCells} onMark={handleCellClick} calledItems={room.calledItems} gridSize={room.gridSize} isMyTurn={user?.uid === room.currentPlayerTurn} />}
           
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
-             {user?.uid === room.currentPlayerTurn && room.status === 'playing' && (
-                <Button size="lg" onClick={handleCallNext}>
-                    <Mic className="mr-2 h-5 w-5"/>
-                    Call Next
-                </Button>
-            )}
             <Button size="lg" variant="destructive" onClick={handleBingo} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg" disabled={room.status === 'finished'}>
                 BINGO!
             </Button>
