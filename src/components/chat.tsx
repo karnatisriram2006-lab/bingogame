@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { db } from '@/lib/firebase';
-import { doc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import type { ChatMessage } from '@/lib/types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -38,7 +38,7 @@ export function Chat({ roomId, messages }: ChatProps) {
             senderId: user.uid,
             senderName: user.displayName || 'Guest',
             text: message.trim(),
-            timestamp: serverTimestamp(),
+            timestamp: new Date(),
         };
 
         try {
