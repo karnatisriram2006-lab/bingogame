@@ -103,33 +103,18 @@ export function GameClient({ roomId }: { roomId: string }) {
   const handleBingo = async () => {
     if (!user || !room || !currentPlayer) return;
 
-    const flatCard = currentPlayer.card;
-    const gridSize = room.gridSize;
-
-    // Generate the list of marked cells based on the called items.
-    const currentMarkedCells: { row: number, col: number }[] = [];
-    flatCard.forEach((cellValue, index) => {
-        if (cellValue === 'FREE' || room.calledItems.includes(cellValue)) {
-            currentMarkedCells.push({
-                row: Math.floor(index / gridSize),
-                col: index % gridSize,
-            });
-        }
-    });
-
-    const winPatterns = checkWin(currentPlayer.card, currentMarkedCells, room.gridSize);
+    const winResult = checkWin(currentPlayer.card, room.calledItems, room.gridSize);
     let isWin = false;
 
     switch (room.winCondition) {
       case '1_line':
-        isWin = winPatterns.lines >= 1;
+        isWin = winResult.lines >= 1;
         break;
       case '2_lines':
-        isWin = winPatterns.lines >= 2;
+        isWin = winResult.lines >= 2;
         break;
       case 'full_house':
-        const totalSquares = room.gridSize * room.gridSize;
-        isWin = currentMarkedCells.length >= totalSquares;
+        isWin = winResult.isFullHouse;
         break;
     }
 
@@ -188,6 +173,55 @@ export function GameClient({ roomId }: { roomId: string }) {
 
     toast({ title: 'Player removed', description: 'The player has been removed from the lobby.' });
   };
+
+  const handleSettingChange = async (key: 'gridSize' | 'gameType' | 'winCondition' | 'customWords', value: any) => {
+    if (!user || !room || user.uid !== room.hostId) return;
+
+    const roomRef = doc(db, 'rooms', roomId);
+
+    const tempSettings = {
+        gridSize: room.gridSize,
+        gameType: room.gameType,
+        customWords: room.customWords,
+        ...{ [key]: value },
+    };
+
+    const updates: Partial<Room> = { [key]: value };
+    const needsCardReset = ['gridSize', 'gameType', 'customWords'].includes(key);
+
+    if (needsCardReset) {
+        if (tempSettings.gameType === 'words') {
+            const wordCount = (tempSettings.customWords || '').split(',').filter(Boolean).length;
+            if (wordCount < tempSettings.gridSize * tempSettings.gridSize) {
+                toast({
+                    variant: "destructive",
+                    title: "Not enough words",
+                    description: `Please provide at least ${tempSettings.gridSize * tempSettings.gridSize} words to start the game.`,
+                });
+            }
+        }
+        
+        const newGameItems = generateGameItems(tempSettings.gridSize, tempSettings.gameType, tempSettings.customWords);
+        updates.gameItems = newGameItems;
+
+        const newPlayersState: Record<string, Player> = {};
+        for (const p of Object.values(room.players)) {
+            newPlayersState[p.id] = {
+                ...p,
+                ready: p.isHost, // Reset ready status for all but host
+                card: generateBingoCard(newGameItems, tempSettings.gridSize),
+            };
+        }
+        updates.players = newPlayersState;
+    }
+    
+    await updateDoc(roomRef, updates as { [x: string]: any });
+    if(needsCardReset){
+        toast({ title: 'Game setting updated!', description: 'Player cards and ready status have been reset.' });
+    } else {
+        toast({ title: 'Game setting updated!'});
+    }
+  };
   
   const copyRoomCode = () => {
     if (!room) return;
@@ -219,6 +253,7 @@ export function GameClient({ roomId }: { roomId: string }) {
         currentPlayer={currentPlayer}
         onCopyLink={copyRoomCode}
         onRemovePlayer={handleRemovePlayer}
+        onSettingChange={handleSettingChange}
       />
     );
   }

@@ -1,6 +1,5 @@
 'use client';
 import { cn } from "@/lib/utils";
-import { Check } from 'lucide-react';
 
 interface BingoCardProps {
   card: (number | string)[];
@@ -33,7 +32,7 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
           const isMarked = isCalled || isFreeSpace;
           
           const isClickableToCall = isMyTurn && !isCalled && !isFreeSpace;
-          const isDisabled = !isClickableToCall && !isFreeSpace;
+          const isDisabled = !isClickableToCall;
 
           return (
             <button
@@ -46,17 +45,13 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
                 gridSize === 5 && "text-base md:text-xl",
                 gridSize === 3 && "text-xl md:text-3xl",
                 isFreeSpace ? "bg-accent text-accent-foreground" : "bg-card shadow-sm",
-                isMarked && !isFreeSpace && "bg-primary text-primary-foreground scale-95 shadow-inner",
+                isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner",
                 isClickableToCall && "cursor-pointer hover:scale-105 hover:ring-2 hover:ring-primary",
-                isDisabled && !isMarked && "cursor-not-allowed opacity-50"
+                !isClickableToCall && "cursor-not-allowed",
+                isMarked && !isClickableToCall && "opacity-60"
               )}
             >
-              {isMarked && !isFreeSpace && (
-                <div className="absolute inset-0 flex items-center justify-center bg-primary/80 rounded-md">
-                   <Check className="h-1/2 w-1/2 text-primary-foreground"/>
-                </div>
-              )}
-              <span className={cn("relative z-10", isMarked && "opacity-50")}>{cell}</span>
+              <span className={cn("relative z-10")}>{cell}</span>
             </button>
           );
         })

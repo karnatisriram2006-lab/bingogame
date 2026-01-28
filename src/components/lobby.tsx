@@ -1,9 +1,14 @@
-import type { Room, Player } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import type { Room, Player, GridSize, GameMode, WinCondition } from '@/lib/types';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { UserX, CheckCircle, Circle, Crown, Copy, Play } from 'lucide-react';
+import { UserX, CheckCircle, Circle, Crown, Copy, Play, Settings } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Separator } from './ui/separator';
+import { Label } from './ui/label';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Input } from './ui/input';
 
 interface LobbyProps {
   room: Room;
@@ -14,12 +19,19 @@ interface LobbyProps {
   currentPlayer: Player | null;
   onCopyLink: () => void;
   onRemovePlayer: (playerId: string) => void;
+  onSettingChange: (key: 'gridSize' | 'gameType' | 'winCondition' | 'customWords', value: any) => void;
 }
 
-export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, onCopyLink, onRemovePlayer }: LobbyProps) {
+export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, onCopyLink, onRemovePlayer, onSettingChange }: LobbyProps) {
     const allReady = players.every(p => p.ready);
+    const [customWords, setCustomWords] = useState(room.customWords || '');
+
+    useEffect(() => {
+        setCustomWords(room.customWords || '');
+    }, [room.customWords]);
+
   return (
-    <div className="container mx-auto max-w-2xl py-12">
+    <div className="container mx-auto max-w-3xl py-12">
       <Card className="shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">Lobby</CardTitle>
@@ -98,6 +110,71 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
               )}
             </div>
           </div>
+          {isHost && (
+            <>
+                <Separator className="my-6" />
+                <div className="space-y-6">
+                    <h3 className="text-lg font-semibold text-center flex items-center justify-center gap-2">
+                        <Settings className="h-5 w-5"/>
+                        Game Settings
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label>Grid Size</Label>
+                            <RadioGroup value={String(room.gridSize)} onValueChange={(v) => onSettingChange('gridSize', Number(v) as GridSize)} className="flex gap-4">
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                                    <RadioGroupItem value="3" id="g3" /> 3x3
+                                </Label>
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                                    <RadioGroupItem value="4" id="g4" /> 4x4
+                                </Label>
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                                    <RadioGroupItem value="5" id="g5" /> 5x5
+                                </Label>
+                            </RadioGroup>
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Win Condition</Label>
+                            <RadioGroup value={room.winCondition} onValueChange={(v) => onSettingChange('winCondition', v as WinCondition)} className="flex flex-wrap gap-4">
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                                    <RadioGroupItem value="1_line" id="w1" /> 1 Line
+                                </Label>
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                                    <RadioGroupItem value="2_lines" id="w2" /> 2 Lines
+                                </Label>
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                                    <RadioGroupItem value="full_house" id="w3" /> Full House
+                                </Label>
+                            </RadioGroup>
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <Label>Game Type</Label>
+                            <RadioGroup value={room.gameType} onValueChange={(v) => onSettingChange('gameType', v as GameMode)} className="flex gap-4">
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
+                                    <RadioGroupItem value="numbers" id="t-num" /> Numbers
+                                </Label>
+                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
+                                    <RadioGroupItem value="words" id="t-word" /> Words
+                                </Label>
+                            </RadioGroup>
+                        </div>
+                        {room.gameType === 'words' && (
+                            <div className="space-y-2 md:col-span-2">
+                                <Label htmlFor="customWords">Custom Words</Label>
+                                <Input
+                                    id="customWords"
+                                    placeholder="cat, dog, house, car..."
+                                    value={customWords}
+                                    onChange={(e) => setCustomWords(e.target.value)}
+                                    onBlur={() => onSettingChange('customWords', customWords)}
+                                />
+                                <p className="text-sm text-muted-foreground">Enter at least {room.gridSize * room.gridSize} words, separated by commas.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
