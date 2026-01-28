@@ -30,12 +30,15 @@ export function GameClient({ roomId }: { roomId: string }) {
     const unsubscribe = onSnapshot(roomRef, (doc) => {
       if (doc.exists()) {
         const roomData = doc.data() as Room;
-        // If current user is no longer in the player list (e.g., was kicked)
-        if (user && !roomData.players[user.uid] && room?.players[user.uid]) {
-          toast({ variant: 'destructive', title: 'You have been removed from the room.' });
-          router.push('/');
-        }
-        setRoom(roomData);
+        setRoom(prevRoom => {
+          // If current user was in the previous state but not in the new one, they were kicked.
+          if (user && prevRoom && prevRoom.players[user.uid] && !roomData.players[user.uid]) {
+            toast({ variant: 'destructive', title: 'You have been removed from the room.' });
+            router.push('/');
+            return prevRoom; // Avoid a flicker of a broken state
+          }
+          return roomData;
+        });
       } else {
         toast({ variant: 'destructive', title: 'Room not found' });
         router.push('/');
@@ -43,7 +46,7 @@ export function GameClient({ roomId }: { roomId: string }) {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [roomId, router, toast, user, room]);
+  }, [roomId, router, toast, user]);
 
   const currentPlayer = user && room ? room.players[user.uid] : null;
 
