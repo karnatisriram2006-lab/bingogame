@@ -26,6 +26,7 @@ interface LobbyProps {
 export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, onCopyLink, onRemovePlayer, onSettingChange }: LobbyProps) {
     const allReady = players.every(p => p.ready);
     const [customWords, setCustomWords] = useState(room.customWords || '');
+    const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
     useEffect(() => {
         setCustomWords(room.customWords || '');
@@ -52,14 +53,17 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
             <div className="flex flex-col gap-4">
                 <h3 className="text-lg font-semibold text-center">Players ({players.length})</h3>
                 <div className="space-y-3">
-                {players.map((player) => (
+                {sortedPlayers.map((player) => (
                     <div key={player.id} className="flex items-center justify-between rounded-lg border bg-background p-3">
                     <div className="flex items-center gap-3">
                         <Avatar>
                         <AvatarImage src={`https://api.dicebear.com/8.x/initials/svg?seed=${player.name}`} />
                         <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <span className="font-medium">{player.name}</span>
+                        <div>
+                            <span className="font-medium">{player.name}</span>
+                            <div className="text-xs text-muted-foreground">Score: {player.score}</div>
+                        </div>
                         {player.isHost && <Crown className="h-5 w-5 text-yellow-500" />}
                     </div>
                     <div className="flex items-center gap-2">
@@ -125,31 +129,27 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                         Game Settings
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
+                        <div className="space-y-2 md:col-span-2">
                             <Label>Grid Size</Label>
-                            <RadioGroup value={String(room.gridSize)} onValueChange={(v) => onSettingChange('gridSize', Number(v) as GridSize)} className="flex flex-wrap gap-4">
-                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
-                                    <RadioGroupItem value="3" id="g3" /> 3x3
-                                </Label>
-                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
-                                    <RadioGroupItem value="4" id="g4" /> 4x4
-                                </Label>
-                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
-                                    <RadioGroupItem value="5" id="g5" /> 5x5
-                                </Label>
+                            <RadioGroup value={String(room.gridSize)} onValueChange={(v) => onSettingChange('gridSize', Number(v) as GridSize)} className="flex flex-wrap gap-2">
+                                {[3, 4, 5, 6, 7, 8, 9, 10].map(size => (
+                                    <Label key={`lobby-${size}`} className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
+                                        <RadioGroupItem value={String(size)} id={`lobby-g${size}`} /> {size}x{size}
+                                    </Label>
+                                ))}
                             </RadioGroup>
                         </div>
                         <div className="space-y-2">
                             <Label>Win Condition</Label>
                             <RadioGroup value={room.winCondition} onValueChange={(v) => onSettingChange('winCondition', v as WinCondition)} className="flex flex-wrap gap-4">
                                 <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
-                                    <RadioGroupItem value="1_line" id="w1" /> 1 Line
+                                    <RadioGroupItem value="1_line" id="w1-lobby" /> 1 Line
                                 </Label>
                                 <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
-                                    <RadioGroupItem value="2_lines" id="w2" /> 2 Lines
+                                    <RadioGroupItem value="2_lines" id="w2-lobby" /> 2 Lines
                                 </Label>
                                 <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
-                                    <RadioGroupItem value="full_house" id="w3" /> Full House
+                                    <RadioGroupItem value="full_house" id="w3-lobby" /> Full House
                                 </Label>
                             </RadioGroup>
                         </div>
@@ -157,10 +157,10 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                             <Label>Game Type</Label>
                             <RadioGroup value={room.gameType} onValueChange={(v) => onSettingChange('gameType', v as GameMode)} className="flex flex-wrap gap-4">
                                 <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
-                                    <RadioGroupItem value="numbers" id="t-num" /> Numbers
+                                    <RadioGroupItem value="numbers" id="t-num-lobby" /> Numbers
                                 </Label>
                                 <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
-                                    <RadioGroupItem value="words" id="t-word" /> Words
+                                    <RadioGroupItem value="words" id="t-word-lobby" /> Words
                                 </Label>
                             </RadioGroup>
                         </div>

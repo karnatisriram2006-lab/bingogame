@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { doc, onSnapshot, updateDoc, deleteField } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, deleteField, increment } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/auth-context';
 import type { Room, Player } from '@/lib/types';
@@ -126,6 +126,7 @@ export function GameClient({ roomId }: { roomId: string }) {
         status: 'finished',
         winnerId: user.uid,
         [`players.${user.uid}.isWinner`]: true,
+        [`players.${user.uid}.score`]: increment(1),
       });
     } else {
       toast({

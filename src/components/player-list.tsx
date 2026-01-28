@@ -27,7 +27,10 @@ export function PlayerList({ players, currentPlayerTurnId }: PlayerListProps) {
               <AvatarImage src={`https://api.dicebear.com/8.x/initials/svg?seed=${player.name}`} />
               <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <span className="font-medium text-sm">{player.name}</span>
+            <div className='flex-grow'>
+                <span className="font-medium text-sm">{player.name}</span>
+                <p className="text-xs text-muted-foreground">Score: {player.score}</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {player.id === currentPlayerTurnId && <Mic className="h-4 w-4 text-primary" />}
