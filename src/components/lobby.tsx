@@ -112,7 +112,7 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                 )}
                 </div>
             </div>
-            <div className="h-[32rem]">
+            <div className="h-96 md:h-[32rem]">
                 <Chat roomId={room.id} messages={room.messages} />
             </div>
           </div>
@@ -127,7 +127,7 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label>Grid Size</Label>
-                            <RadioGroup value={String(room.gridSize)} onValueChange={(v) => onSettingChange('gridSize', Number(v) as GridSize)} className="flex gap-4">
+                            <RadioGroup value={String(room.gridSize)} onValueChange={(v) => onSettingChange('gridSize', Number(v) as GridSize)} className="flex flex-wrap gap-4">
                                 <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
                                     <RadioGroupItem value="3" id="g3" /> 3x3
                                 </Label>
@@ -155,7 +155,7 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                         </div>
                         <div className="space-y-2 md:col-span-2">
                             <Label>Game Type</Label>
-                            <RadioGroup value={room.gameType} onValueChange={(v) => onSettingChange('gameType', v as GameMode)} className="flex gap-4">
+                            <RadioGroup value={room.gameType} onValueChange={(v) => onSettingChange('gameType', v as GameMode)} className="flex flex-wrap gap-4">
                                 <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
                                     <RadioGroupItem value="numbers" id="t-num" /> Numbers
                                 </Label>

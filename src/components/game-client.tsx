@@ -305,7 +305,7 @@ export function GameClient({ roomId }: { roomId: string }) {
                 </Button>
             </div>
             <Separator />
-            <div className="h-[32rem]">
+            <div className="h-96">
                 <Chat roomId={roomId} messages={room.messages} />
             </div>
         </aside>

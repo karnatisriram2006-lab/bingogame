@@ -104,7 +104,7 @@ export function CreateRoomForm({ onRoomCreated }: CreateRoomFormProps) {
     <form onSubmit={handleCreateRoom} className="grid gap-6">
       <div className="space-y-2">
         <Label>Grid Size</Label>
-        <RadioGroup value={String(gridSize)} onValueChange={(v) => setGridSize(Number(v) as GridSize)} className="flex gap-4">
+        <RadioGroup value={String(gridSize)} onValueChange={(v) => setGridSize(Number(v) as GridSize)} className="flex flex-wrap gap-4">
           <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
             <RadioGroupItem value="3" id="g3" /> 3x3
           </Label>
@@ -118,7 +118,7 @@ export function CreateRoomForm({ onRoomCreated }: CreateRoomFormProps) {
       </div>
       <div className="space-y-2">
         <Label>Game Type</Label>
-        <RadioGroup value={gameType} onValueChange={(v) => setGameType(v as GameMode)} className="flex gap-4">
+        <RadioGroup value={gameType} onValueChange={(v) => setGameType(v as GameMode)} className="flex flex-wrap gap-4">
           <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
             <RadioGroupItem value="numbers" id="t-num" /> Numbers
           </Label>
