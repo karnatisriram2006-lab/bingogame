@@ -13,7 +13,7 @@ import { BingoCard } from '@/components/bingo-card';
 import { CalledItems } from '@/components/called-items';
 import { Button } from '@/components/ui/button';
 import { WinnerPopup } from '@/components/winner-popup';
-import { checkWin, generateBingoCard } from '@/lib/bingo-logic';
+import { checkWin, generateBingoCard, generateGameItems } from '@/lib/bingo-logic';
 import { Loader2, Copy } from 'lucide-react';
 import { Separator } from './ui/separator';
 
@@ -195,12 +195,14 @@ export function GameClient({ roomId }: { roomId: string }) {
     if (!user || !room || user.uid !== room.hostId) return;
     const roomRef = doc(db, 'rooms', roomId);
     
+    const newGameItems = generateGameItems(room.gridSize, room.gameType, room.customWords);
+    
     const newPlayersState: Record<string, Player> = {};
     for (const p of Object.values(room.players)) {
         newPlayersState[p.id] = {
             ...p,
             ready: p.isHost,
-            card: generateBingoCard(room.gridSize, room.gameType, room.customWords),
+            card: generateBingoCard(newGameItems, room.gridSize),
             markedCells: [],
             isWinner: false,
         };
@@ -212,6 +214,7 @@ export function GameClient({ roomId }: { roomId: string }) {
         currentItem: null,
         winnerId: null,
         players: newPlayersState,
+        gameItems: newGameItems,
         playerOrder: deleteField(),
         currentPlayerTurn: deleteField(),
     });

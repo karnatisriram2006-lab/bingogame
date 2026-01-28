@@ -31,6 +31,7 @@ export type Room = {
   gameType: GameMode;
   winCondition: WinCondition;
   customWords?: string;
+  gameItems: (string | number)[];
   calledItems: (string | number)[];
   currentItem: string | number | null;
   createdAt: Timestamp;

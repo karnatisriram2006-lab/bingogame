@@ -9,35 +9,48 @@ export function generateRoomCode(length: number = 5): string {
   return result;
 }
 
-export function generateBingoCard(gridSize: GridSize, gameType: GameMode, customWords?: string): (number | string)[] {
-  const cardSize = gridSize * gridSize;
-  let sourcePool: (string | number)[];
+// New function to create the pool of items for the entire game.
+export function generateGameItems(gridSize: GridSize, gameType: GameMode, customWords?: string): (string | number)[] {
+    const cardSize = gridSize * gridSize;
+    let sourcePool: (string | number)[];
 
-  if (gameType === 'numbers') {
-    sourcePool = Array.from({ length: 75 }, (_, i) => i + 1);
-  } else {
-    sourcePool = (customWords || '').split(',').map(w => w.trim()).filter(Boolean);
-    if (sourcePool.length < cardSize) {
-      const placeholders = Array.from({length: cardSize - sourcePool.length}, (_, i) => `Word ${i+1}`);
-      sourcePool.push(...placeholders);
+    if (gameType === 'numbers') {
+        sourcePool = Array.from({ length: 75 }, (_, i) => i + 1);
+    } else {
+        sourcePool = (customWords || '').split(',').map(w => w.trim()).filter(Boolean);
+        if (sourcePool.length < cardSize) {
+            const placeholders = Array.from({length: cardSize - sourcePool.length}, (_, i) => `Word ${i+1}`);
+            sourcePool.push(...placeholders);
+        }
     }
-  }
 
-  // Fisher-Yates shuffle to ensure card uniqueness
-  for (let i = sourcePool.length - 1; i > 0; i--) {
+    // Shuffle the main source pool
+    for (let i = sourcePool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [sourcePool[i], sourcePool[j]] = [sourcePool[j], sourcePool[i]];
+    }
+    
+    // Select the items for this specific game
+    return sourcePool.slice(0, cardSize);
+}
+
+// MODIFIED function to generate a card from a pre-defined set of items.
+export function generateBingoCard(gameItems: (string | number)[], gridSize: GridSize): (number | string)[] {
+  const itemsToShuffle = [...gameItems];
+
+  // Fisher-Yates shuffle
+  for (let i = itemsToShuffle.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [sourcePool[i], sourcePool[j]] = [sourcePool[j], sourcePool[i]];
-  }
-
-  // Handle the 'FREE' space separately for 5x5 grids
-  if (gridSize === 5) {
-    const itemsForCard = sourcePool.filter(item => item !== 'FREE').slice(0, cardSize - 1);
-    const centerIndex = Math.floor(cardSize / 2);
-    itemsForCard.splice(centerIndex, 0, 'FREE');
-    return itemsForCard;
+    [itemsToShuffle[i], itemsToShuffle[j]] = [itemsToShuffle[j], itemsToShuffle[i]];
   }
   
-  return sourcePool.slice(0, cardSize);
+  if (gridSize === 5) {
+    const centerIndex = Math.floor((gridSize * gridSize) / 2);
+    // Replace the center item with 'FREE'. The original item at that position will not be on this card.
+    itemsToShuffle[centerIndex] = 'FREE';
+  }
+  
+  return itemsToShuffle;
 }
 
 

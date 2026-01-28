@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { generateRoomCode, generateBingoCard } from '@/lib/bingo-logic';
+import { generateRoomCode, generateBingoCard, generateGameItems } from '@/lib/bingo-logic';
 import type { Room, Player, GridSize, GameMode, WinCondition } from '@/lib/types';
 import { AuthForm } from './auth-form';
 import { Button } from '@/components/ui/button';
@@ -50,12 +50,14 @@ export function CreateRoomForm({ onRoomCreated }: CreateRoomFormProps) {
     const roomCode = generateRoomCode();
     const roomId = doc(db, 'rooms', roomCode).id;
 
+    const gameItems = generateGameItems(gridSize, gameType, customWords);
+
     const hostPlayer: Player = {
       id: user.uid,
       name: user.displayName || 'Host',
       isHost: true,
       ready: true,
-      card: generateBingoCard(gridSize, gameType, customWords),
+      card: generateBingoCard(gameItems, gridSize),
       markedCells: [],
       score: 0,
       isWinner: false,
@@ -69,6 +71,7 @@ export function CreateRoomForm({ onRoomCreated }: CreateRoomFormProps) {
       gridSize,
       gameType,
       winCondition,
+      gameItems,
       calledItems: [],
       currentItem: null,
       createdAt: serverTimestamp(),
