@@ -103,7 +103,28 @@ export function GameClient({ roomId }: { roomId: string }) {
 
   const handleBingo = async () => {
     if (!user || !room || !currentPlayer) return;
-    const win = checkWin(currentPlayer.card, currentPlayer.markedCells, room.gridSize);
+
+    // First, verify that all marked cells are valid (i.e., have been called)
+    const card: (number | string)[][] = [];
+    for (let i = 0; i < room.gridSize; i++) {
+        card.push(currentPlayer.card.slice(i * room.gridSize, (i + 1) * room.gridSize));
+    }
+    const invalidMarks = currentPlayer.markedCells.filter(({ row, col }) => {
+        const cellValue = card[row][col];
+        return cellValue !== 'FREE' && !room.calledItems.includes(cellValue);
+    });
+
+    if (invalidMarks.length > 0) {
+      toast({ 
+        variant: 'destructive', 
+        title: 'Not quite...', 
+        description: "You've marked a number that hasn't been called yet." 
+      });
+      return;
+    }
+    
+    // Now, check for a winning pattern
+    const win = checkWin(currentPlayer.card, currentPlayer.markedCells, room.gridSize, room.calledItems);
     let isWin = false;
     switch(room.winCondition) {
         case '1_line': isWin = win.lines >= 1; break;
