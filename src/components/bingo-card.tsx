@@ -31,7 +31,7 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
   return (
     <div className={cn(
       `grid ${gridClasses[gridSize]} bg-primary/10 rounded-lg shadow-inner w-full max-w-md md:max-w-lg lg:max-w-xl`,
-      gridSize > 5 ? "gap-1 p-1 md:p-2" : "gap-1.5 md:gap-2 p-2 md:p-4"
+      gridSize > 7 ? "gap-1 p-1" : gridSize > 4 ? "gap-1.5 p-1.5 md:p-2" : "gap-2 p-2 md:p-4"
     )}>
       {card.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
@@ -49,12 +49,11 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
               onClick={() => onMark(rowIndex, colIndex)}
               className={cn(
                 "relative flex items-center justify-center aspect-square rounded-md transition-all duration-300 ease-in-out transform font-bold",
-                gridSize <= 3 ? "text-xl md:text-3xl" :
-                gridSize <= 4 ? "text-lg md:text-2xl" :
-                gridSize <= 5 ? "text-base md:text-xl" :
-                gridSize <= 7 ? "text-sm md:text-lg" :
-                gridSize <= 9 ? "text-xs md:text-base" :
-                "text-[10px] md:text-xs",
+                gridSize <= 3 ? "text-xl md:text-2xl" :      // 3
+                gridSize <= 4 ? "text-lg md:text-xl" :       // 4
+                gridSize <= 6 ? "text-base md:text-lg" :     // 5, 6
+                gridSize <= 8 ? "text-sm md:text-base" :     // 7, 8
+                "text-xs md:text-sm",                         // 9, 10
                 isFreeSpace ? "bg-accent text-accent-foreground" : "bg-card shadow-sm",
                 isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner",
                 isClickableToCall && "cursor-pointer hover:scale-105 hover:ring-2 hover:ring-primary",
