@@ -228,6 +228,12 @@ export function GameClient({ roomId }: { roomId: string }) {
     toast({ title: 'Player removed', description: 'The player has been removed from the lobby.' });
   };
   
+  const copyRoomCode = () => {
+    if (!room) return;
+    navigator.clipboard.writeText(room.code);
+    toast({ title: "Copied to clipboard!", description: "Room code ready to be shared." });
+  }
+
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
     toast({ title: "Copied to clipboard!", description: "Room link ready to be shared." });
@@ -250,7 +256,7 @@ export function GameClient({ roomId }: { roomId: string }) {
         onReady={handleReady}
         onStart={handleStartGame}
         currentPlayer={currentPlayer}
-        onCopyLink={copyLink}
+        onCopyLink={copyRoomCode}
         onRemovePlayer={handleRemovePlayer}
       />
     );
