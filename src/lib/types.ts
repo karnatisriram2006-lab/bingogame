@@ -36,4 +36,6 @@ export type Room = {
   createdAt: Timestamp;
   winnerId?: string | null;
   players: Record<string, Player>;
+  playerOrder?: string[];
+  currentPlayerTurn?: string;
 };

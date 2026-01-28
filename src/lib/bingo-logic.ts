@@ -45,14 +45,12 @@ export function generateBingoCard(gridSize: GridSize, gameType: GameMode, custom
   return card.flat();
 }
 
-// NOTE: In a production app, this verification logic MUST run on the server
-// (e.g., a Firebase Cloud Function) to prevent cheating.
+// This function checks for line completions only. Win condition logic is handled in the component.
 export function checkWin(
     flatCard: (number | string)[], 
     markedCells: { row: number, col: number }[], 
-    gridSize: GridSize,
-    calledItems: (string | number)[]
-): { lines: number, isFullHouse: boolean } {
+    gridSize: GridSize
+): { lines: number } {
     const card: (number | string)[][] = [];
     for (let i = 0; i < gridSize; i++) {
         card.push(flatCard.slice(i * gridSize, (i + 1) * gridSize));
@@ -84,9 +82,5 @@ export function checkWin(
         lines++;
     }
 
-    // A player wins "full house" if every number on their card has been called.
-    const allCardItems = flatCard.filter(item => item !== 'FREE');
-    const isFullHouse = allCardItems.every(item => calledItems.includes(item));
-
-    return { lines, isFullHouse };
+    return { lines };
 }

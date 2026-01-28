@@ -1,13 +1,14 @@
 import type { Player } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Crown, Trophy } from 'lucide-react';
+import { Crown, Trophy, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PlayerListProps {
   players: Player[];
+  currentPlayerTurnId?: string;
 }
 
-export function PlayerList({ players }: PlayerListProps) {
+export function PlayerList({ players, currentPlayerTurnId }: PlayerListProps) {
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
 
   return (
@@ -17,7 +18,8 @@ export function PlayerList({ players }: PlayerListProps) {
           key={player.id} 
           className={cn(
               "flex items-center justify-between rounded-lg p-2 transition-all",
-              player.isWinner ? "bg-yellow-400/20 border border-yellow-500" : "bg-secondary/50"
+              player.isWinner ? "bg-yellow-400/20 border border-yellow-500" : "bg-secondary/50",
+              player.id === currentPlayerTurnId && "ring-2 ring-primary"
           )}
         >
           <div className="flex items-center gap-3">
@@ -28,6 +30,7 @@ export function PlayerList({ players }: PlayerListProps) {
             <span className="font-medium text-sm">{player.name}</span>
           </div>
           <div className="flex items-center gap-2">
+            {player.id === currentPlayerTurnId && <Mic className="h-4 w-4 text-primary" />}
             {player.isWinner && <Trophy className="h-4 w-4 text-yellow-500" />}
             {player.isHost && <Crown className="h-4 w-4 text-amber-500" />}
           </div>
