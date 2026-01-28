@@ -10,40 +10,36 @@ export function generateRoomCode(length: number = 5): string {
 }
 
 export function generateBingoCard(gridSize: GridSize, gameType: GameMode, customWords?: string): (number | string)[] {
-  const card: (number | string)[][] = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
-  
+  const cardSize = gridSize * gridSize;
+  let sourcePool: (string | number)[];
+
   if (gameType === 'numbers') {
-    const numbers = Array.from({ length: 75 }, (_, i) => i + 1);
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
-        const randomIndex = Math.floor(Math.random() * numbers.length);
-        card[i][j] = numbers.splice(randomIndex, 1)[0];
-      }
-    }
+    sourcePool = Array.from({ length: 75 }, (_, i) => i + 1);
   } else {
-    const words = (customWords || '').split(',').map(w => w.trim()).filter(Boolean);
-    if (words.length < gridSize * gridSize) {
-      // Pad with placeholder words if not enough are provided
-      const placeholders = Array.from({length: gridSize * gridSize - words.length}, (_, i) => `Word ${i+1}`);
-      words.push(...placeholders);
-    }
-    
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
-        const randomIndex = Math.floor(Math.random() * words.length);
-        card[i][j] = words.splice(randomIndex, 1)[0];
-      }
+    sourcePool = (customWords || '').split(',').map(w => w.trim()).filter(Boolean);
+    if (sourcePool.length < cardSize) {
+      const placeholders = Array.from({length: cardSize - sourcePool.length}, (_, i) => `Word ${i+1}`);
+      sourcePool.push(...placeholders);
     }
   }
 
-  // For 5x5, the center is free
+  // Fisher-Yates shuffle to ensure card uniqueness
+  for (let i = sourcePool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [sourcePool[i], sourcePool[j]] = [sourcePool[j], sourcePool[i]];
+  }
+
+  // Handle the 'FREE' space separately for 5x5 grids
   if (gridSize === 5) {
-    const center = Math.floor(gridSize / 2);
-    card[center][center] = 'FREE';
+    const itemsForCard = sourcePool.filter(item => item !== 'FREE').slice(0, cardSize - 1);
+    const centerIndex = Math.floor(cardSize / 2);
+    itemsForCard.splice(centerIndex, 0, 'FREE');
+    return itemsForCard;
   }
-
-  return card.flat();
+  
+  return sourcePool.slice(0, cardSize);
 }
+
 
 // This function checks for line completions only. Win condition logic is handled in the component.
 export function checkWin(
