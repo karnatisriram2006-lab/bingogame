@@ -47,7 +47,7 @@ export function HowToPlay() {
                 </div>
             </AccordionTrigger>
             <AccordionContent className="text-muted-foreground">
-            When you complete the required pattern (e.g., one line, full house), hit the "BINGO!" button. The system will verify your card. If it's a valid win, you'll be crowned the winner!
+            When you complete the win condition (like getting one line), hit the "BINGO!" button. If the condition is "Full House," it means you need to mark every single square on your card. The system will verify your win and crown you the champion!
             </AccordionContent>
         </AccordionItem>
         </Accordion>
