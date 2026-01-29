@@ -141,15 +141,24 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                         </div>
                         <div className="space-y-2">
                             <Label>Win Condition</Label>
-                            <RadioGroup value={room.winCondition} onValueChange={(v) => onSettingChange('winCondition', v as WinCondition)} className="flex flex-wrap gap-4">
-                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                            <RadioGroup value={room.winCondition} onValueChange={(v) => onSettingChange('winCondition', v as WinCondition)} className="grid grid-cols-2 gap-2">
+                                <Label className="flex items-center justify-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
                                     <RadioGroupItem value="1_line" id="w1-lobby" /> 1 Line
                                 </Label>
-                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
+                                <Label className="flex items-center justify-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
                                     <RadioGroupItem value="2_lines" id="w2-lobby" /> 2 Lines
                                 </Label>
-                                <Label className="flex items-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary flex-1 justify-center">
-                                    <RadioGroupItem value="full_house" id="w3-lobby" /> Full House
+                                <Label className="flex items-center justify-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
+                                    <RadioGroupItem value="3_lines" id="w3-lobby" /> 3 Lines
+                                </Label>
+                                <Label className="flex items-center justify-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
+                                    <RadioGroupItem value="4_lines" id="w4-lobby" /> 4 Lines
+                                </Label>
+                                <Label className="flex items-center justify-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
+                                    <RadioGroupItem value="5_lines" id="w5-lobby" /> 5 Lines
+                                </Label>
+                                <Label className="flex items-center justify-center gap-2 cursor-pointer border p-3 rounded-md has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary">
+                                    <RadioGroupItem value="full_house" id="wfh-lobby" /> Full House
                                 </Label>
                             </RadioGroup>
                         </div>

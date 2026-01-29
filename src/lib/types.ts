@@ -18,7 +18,7 @@ export type Player = {
 };
 
 export type GameMode = 'numbers' | 'words';
-export type WinCondition = '1_line' | '2_lines' | 'full_house';
+export type WinCondition = '1_line' | '2_lines' | '3_lines' | '4_lines' | '5_lines' | 'full_house';
 export type GridSize = 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 export type ChatMessage = {

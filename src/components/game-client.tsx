@@ -115,6 +115,15 @@ export function GameClient({ roomId }: { roomId: string }) {
       case '2_lines':
         isWin = winResult.lines >= 2;
         break;
+      case '3_lines':
+        isWin = winResult.lines >= 3;
+        break;
+      case '4_lines':
+        isWin = winResult.lines >= 4;
+        break;
+      case '5_lines':
+        isWin = winResult.lines >= 5;
+        break;
       case 'full_house':
         isWin = winResult.isFullHouse;
         break;
