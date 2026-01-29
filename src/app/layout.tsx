@@ -3,6 +3,7 @@ import './globals.css';
 import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/header';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'BingoBlitz - Modern Online Bingo',
@@ -39,6 +40,7 @@ export default function RootLayout({
           </div>
           <Toaster />
         </Providers>
+        <SpeedInsights />
       </body>
     </html>
   );
