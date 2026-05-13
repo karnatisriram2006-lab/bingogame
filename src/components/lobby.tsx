@@ -33,8 +33,8 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
     }, [room.customWords]);
 
   return (
-    <div className="container mx-auto max-w-5xl py-12">
-      <Card className="shadow-xl">
+    <div className="container mx-auto max-w-5xl py-6 md:py-12 px-4">
+      <Card className="shadow-xl border-2">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">Lobby</CardTitle>
           <CardDescription>Waiting for players to get ready. The host will start the game.</CardDescription>
@@ -48,7 +48,7 @@ export function Lobby({ room, players, isHost, onReady, onStart, currentPlayer, 
                 </div>
             </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 md:p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="flex flex-col gap-4">
                 <h3 className="text-lg font-semibold text-center">Players ({players.length})</h3>

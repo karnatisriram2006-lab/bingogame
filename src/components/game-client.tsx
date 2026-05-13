@@ -18,6 +18,8 @@ import { Loader2, Copy } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Chat } from './chat';
 import { cn } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MessageSquare, LayoutGrid, List } from 'lucide-react';
 
 export function GameClient({ roomId }: { roomId: string }) {
   const [room, setRoom] = useState<Room | null>(null);
@@ -269,12 +271,14 @@ export function GameClient({ roomId }: { roomId: string }) {
        {room.status === 'finished' && winner && (
         <WinnerPopup winner={winner} isHost={user?.uid === room.hostId} onPlayAgain={handlePlayAgain} />
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <aside className="lg:col-span-1 order-2 lg:order-1 rounded-lg bg-card p-4 shadow-sm">
+
+      {/* Desktop Layout */}
+      <div className="hidden lg:grid grid-cols-4 gap-6">
+        <aside className="col-span-1 rounded-lg bg-card p-4 shadow-sm border">
           <CalledItems items={room.calledItems} />
         </aside>
 
-        <main className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center gap-6">
+        <main className="col-span-2 flex flex-col items-center gap-6">
           <div className="text-center bg-card p-6 rounded-2xl shadow-lg border-2 border-primary/20 w-full max-w-sm relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-purple-500 to-primary animate-gradient-x" />
             <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-2">Current Item</h2>
@@ -287,8 +291,8 @@ export function GameClient({ roomId }: { roomId: string }) {
               <div className={cn(
                 "text-center w-full max-w-md p-3 rounded-lg transition-colors duration-300",
                 user?.uid === room.currentPlayerTurn 
-                    ? 'bg-accent animate-pulse' 
-                    : 'bg-secondary/50'
+                    ? 'bg-accent animate-pulse border-2 border-accent-foreground/20'
+                    : 'bg-secondary/50 border border-transparent'
               )}>
                   <p className={cn(
                       "font-bold text-lg",
@@ -314,7 +318,7 @@ export function GameClient({ roomId }: { roomId: string }) {
           </div>
         </main>
         
-        <aside className="lg:col-span-1 order-3 rounded-lg bg-card p-4 shadow-sm flex flex-col gap-4">
+        <aside className="col-span-1 rounded-lg bg-card p-4 shadow-sm border flex flex-col gap-4">
             <div>
                 <h3 className="text-lg font-bold mb-4">Players</h3>
                 <PlayerList players={Object.values(room.players)} currentPlayerTurnId={room.currentPlayerTurn} />
@@ -328,6 +332,78 @@ export function GameClient({ roomId }: { roomId: string }) {
                 <Chat roomId={roomId} messages={room.messages} />
             </div>
         </aside>
+      </div>
+
+      {/* Mobile Layout with Tabs */}
+      <div className="lg:hidden">
+        <Tabs defaultValue="board" className="w-full">
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t pb-safe">
+                <TabsList className="w-full h-16 grid grid-cols-3 bg-transparent">
+                    <TabsTrigger value="board" className="flex flex-col gap-1 data-[state=active]:text-primary">
+                        <LayoutGrid className="h-5 w-5" />
+                        <span className="text-[10px]">Board</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="called" className="flex flex-col gap-1 data-[state=active]:text-primary">
+                        <List className="h-5 w-5" />
+                        <span className="text-[10px]">Called</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="chat" className="flex flex-col gap-1 data-[state=active]:text-primary relative">
+                        <MessageSquare className="h-5 w-5" />
+                        <span className="text-[10px]">Chat</span>
+                        {room.messages.length > 0 && <span className="absolute top-2 right-1/4 h-2 w-2 bg-primary rounded-full" />}
+                    </TabsTrigger>
+                </TabsList>
+            </div>
+
+            <TabsContent value="board" className="mt-0 pb-20">
+                <div className="flex flex-col items-center gap-6">
+                    <div className="text-center bg-card p-4 rounded-xl shadow-md border-2 border-primary/20 w-full max-w-[200px] relative overflow-hidden">
+                        <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Called</h2>
+                        <p className="text-4xl font-black text-primary">{room.currentItem || '---'}</p>
+                    </div>
+
+                    {room.status === 'playing' && room.currentPlayerTurn && (
+                        <div className={cn(
+                            "text-center w-full p-2 rounded-lg text-sm",
+                            user?.uid === room.currentPlayerTurn ? 'bg-accent animate-pulse' : 'bg-secondary/50'
+                        )}>
+                            <p className="font-bold">
+                                {user?.uid === room.currentPlayerTurn ? "Your Turn!" : `Waiting for ${room.players[room.currentPlayerTurn]?.name || 'player'}...`}
+                            </p>
+                        </div>
+                    )}
+
+                    {currentPlayer && <BingoCard card={currentPlayer.card} onMark={handleCellClick} calledItems={room.calledItems} gridSize={room.gridSize} isMyTurn={user?.uid === room.currentPlayerTurn} />}
+
+                    <Button
+                        size="lg"
+                        variant="destructive"
+                        onClick={handleBingo}
+                        className="w-full max-w-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg py-6 text-xl font-black"
+                        disabled={room.status === 'finished'}
+                    >
+                        SHOUT BINGO!
+                    </Button>
+
+                    <div className="w-full mt-4 bg-card rounded-lg p-4 border">
+                        <h3 className="font-bold mb-2 text-sm">Players</h3>
+                        <PlayerList players={Object.values(room.players)} currentPlayerTurnId={room.currentPlayerTurn} />
+                    </div>
+                </div>
+            </TabsContent>
+
+            <TabsContent value="called" className="mt-0 pb-20">
+                <div className="bg-card rounded-xl p-4 border min-h-[50vh]">
+                    <CalledItems items={room.calledItems} />
+                </div>
+            </TabsContent>
+
+            <TabsContent value="chat" className="mt-0 pb-20">
+                <div className="bg-card rounded-xl border overflow-hidden h-[70vh]">
+                    <Chat roomId={roomId} messages={room.messages} />
+                </div>
+            </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

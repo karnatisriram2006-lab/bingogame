@@ -66,9 +66,9 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
                 isMarked && "scale-110"
               )}>{cell}</span>
               {isMarked && !isFreeSpace && (
-                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                  <div className="h-full w-0.5 rotate-45 bg-primary-foreground" />
-                  <div className="h-full w-0.5 -rotate-45 bg-primary-foreground" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-20 overflow-hidden rounded-md">
+                  <div className="h-[150%] w-0.5 rotate-45 bg-primary-foreground animate-in slide-in-from-top duration-500" />
+                  <div className="h-[150%] w-0.5 -rotate-45 bg-primary-foreground animate-in slide-in-from-bottom duration-500" />
                 </div>
               )}
             </button>

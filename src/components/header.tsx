@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
+import { ModeToggle } from './mode-toggle';
 
 export function Header() {
   const { user, signOut } = useAuth();
@@ -24,7 +25,8 @@ export function Header() {
             BingoBlitz
           </span>
         </Link>
-        <div className="flex flex-1 items-center justify-end">
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <ModeToggle />
           <nav className="flex items-center">
             {user && (
               <DropdownMenu>
