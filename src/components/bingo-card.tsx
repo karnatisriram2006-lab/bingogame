@@ -48,20 +48,29 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
               disabled={isDisabled}
               onClick={() => onMark(rowIndex, colIndex)}
               className={cn(
-                "relative flex items-center justify-center aspect-square rounded-md transition-all duration-300 ease-in-out transform font-bold",
+                "relative flex items-center justify-center aspect-square rounded-md transition-all duration-300 ease-in-out transform font-bold border-2",
                 gridSize <= 3 ? "text-xl md:text-2xl" :      // 3
                 gridSize <= 4 ? "text-lg md:text-xl" :       // 4
                 gridSize <= 6 ? "text-base md:text-lg" :     // 5, 6
                 gridSize <= 8 ? "text-sm md:text-base" :     // 7, 8
                 "text-xs md:text-sm",                         // 9, 10
-                isFreeSpace ? "bg-accent text-accent-foreground" : "bg-card shadow-sm",
-                isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner",
-                isClickableToCall && "cursor-pointer hover:scale-105 hover:ring-2 hover:ring-primary",
+                isFreeSpace ? "bg-accent/20 border-accent text-accent-foreground" : "bg-card border-transparent shadow-sm",
+                isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner border-primary-foreground/20",
+                isClickableToCall && "cursor-pointer hover:scale-105 hover:border-primary hover:shadow-md active:scale-95",
                 !isClickableToCall && "cursor-not-allowed",
-                isMarked && !isClickableToCall && "opacity-60"
+                isMarked && !isClickableToCall && "opacity-90"
               )}
             >
-              <span className={cn("relative z-10")}>{cell}</span>
+              <span className={cn(
+                "relative z-10 transition-transform duration-300",
+                isMarked && "scale-110"
+              )}>{cell}</span>
+              {isMarked && !isFreeSpace && (
+                <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                  <div className="h-full w-0.5 rotate-45 bg-primary-foreground" />
+                  <div className="h-full w-0.5 -rotate-45 bg-primary-foreground" />
+                </div>
+              )}
             </button>
           );
         })

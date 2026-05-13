@@ -1,4 +1,4 @@
-import type { Timestamp } from 'firebase/firestore';
+import type { Timestamp, FieldValue } from 'firebase/firestore';
 
 export type AppUser = {
   uid: string;
@@ -41,7 +41,7 @@ export type Room = {
   gameItems: (string | number)[];
   calledItems: (string | number)[];
   currentItem: string | number | null;
-  createdAt: Timestamp;
+  createdAt: Timestamp | FieldValue;
   winnerId?: string | null;
   players: Record<string, Player>;
   playerOrder?: string[];

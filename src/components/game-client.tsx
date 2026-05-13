@@ -274,10 +274,13 @@ export function GameClient({ roomId }: { roomId: string }) {
           <CalledItems items={room.calledItems} />
         </aside>
 
-        <main className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center gap-4">
-          <div className="text-center">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Called</h2>
-            <p className="text-5xl md:text-7xl font-black text-primary animate-pulse">{room.currentItem || '...'}</p>
+        <main className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center gap-6">
+          <div className="text-center bg-card p-6 rounded-2xl shadow-lg border-2 border-primary/20 w-full max-w-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-purple-500 to-primary animate-gradient-x" />
+            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-2">Current Item</h2>
+            <p className="text-6xl md:text-8xl font-black text-primary drop-shadow-sm animate-in zoom-in duration-300">
+                {room.currentItem || '---'}
+            </p>
           </div>
 
           {room.status === 'playing' && room.currentPlayerTurn && (
@@ -298,9 +301,15 @@ export function GameClient({ roomId }: { roomId: string }) {
           
           {currentPlayer && <BingoCard card={currentPlayer.card} onMark={handleCellClick} calledItems={room.calledItems} gridSize={room.gridSize} isMyTurn={user?.uid === room.currentPlayerTurn} />}
           
-          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <Button size="lg" variant="destructive" onClick={handleBingo} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg" disabled={room.status === 'finished'}>
-                BINGO!
+          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mt-4">
+            <Button
+                size="lg"
+                variant="destructive"
+                onClick={handleBingo}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xl hover:scale-105 active:scale-95 transition-all px-12 py-8 text-2xl font-black tracking-widest"
+                disabled={room.status === 'finished'}
+            >
+                SHOUT BINGO!
             </Button>
           </div>
         </main>

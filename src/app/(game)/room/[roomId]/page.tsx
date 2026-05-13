@@ -1,11 +1,12 @@
 import { GameClient } from "@/components/game-client";
 
 type RoomPageProps = {
-  params: {
+  params: Promise<{
     roomId: string;
-  };
+  }>;
 };
 
 export default async function RoomPage({ params }: RoomPageProps) {
-  return <GameClient roomId={params.roomId} />;
+  const { roomId } = await params;
+  return <GameClient roomId={roomId} />;
 }

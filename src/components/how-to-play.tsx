@@ -1,56 +1,49 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Users, Ticket, CheckCircle, Trophy } from 'lucide-react';
 
 export function HowToPlay() {
+  const steps = [
+    {
+      icon: Users,
+      title: 'Step 1: Create or Join',
+      description: 'Create a new room as host or join with a code. Play as a guest or sign in with Google.',
+    },
+    {
+      icon: Ticket,
+      title: 'Step 2: Get Your Card',
+      description: 'Wait for the host to start. A unique bingo card will be generated for you automatically.',
+    },
+    {
+      icon: CheckCircle,
+      title: 'Step 3: Mark Your Card',
+      description: 'Listen for the called items. Click your card to mark matches as they are called.',
+    },
+    {
+      icon: Trophy,
+      title: 'Step 4: Shout BINGO!',
+      description: 'Complete the pattern and hit BINGO! If verified, you win the round!',
+    },
+  ];
+
   return (
-    <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-8">How to Play</h2>
-        <Accordion type="single" collapsible className="w-full text-left">
-        <AccordionItem value="item-1">
-            <AccordionTrigger className="text-lg font-semibold">
-            <div className="flex items-center gap-3">
-                <div className="bg-primary/10 text-primary p-2 rounded-lg"><Users className="h-5 w-5" /></div>
-                Step 1: Create or Join a Room
+    <div className="mx-auto max-w-5xl">
+      <div className="mb-12 text-center">
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How to Play</h2>
+        <p className="mt-4 text-muted-foreground">Four simple steps to start your bingo journey.</p>
+      </div>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+        {steps.map((step, index) => (
+          <div key={index} className="relative flex flex-col items-center text-center">
+            {index < steps.length - 1 && (
+              <div className="absolute left-[60%] top-8 hidden w-full border-t-2 border-dashed border-muted lg:block" />
+            )}
+            <div className="z-10 mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+              <step.icon className="h-8 w-8" />
             </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground">
-            Choose to create a new room as the host or join an existing room using a unique room code provided by a friend. You can play as a guest or sign in with your Google account.
-            </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-2">
-            <AccordionTrigger className="text-lg font-semibold">
-            <div className="flex items-center gap-3">
-                <div className="bg-primary/10 text-primary p-2 rounded-lg"><Ticket className="h-5 w-5" /></div>
-                Step 2: Get Your Bingo Card
-            </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground">
-            Once in the lobby, wait for the host to start the game. A unique bingo card will be automatically generated for you based on the room's settings (e.g., numbers or words).
-            </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-3">
-            <AccordionTrigger className="text-lg font-semibold">
-            <div className="flex items-center gap-3">
-                <div className="bg-primary/10 text-primary p-2 rounded-lg"><CheckCircle className="h-5 w-5" /></div>
-                Step 3: Mark Your Card
-            </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground">
-            Listen for the numbers or words called by the host. If the called item is on your card, click or tap to mark the cell. The system will also auto-highlight matches for you!
-            </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="item-4">
-            <AccordionTrigger className="text-lg font-semibold">
-                <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 text-primary p-2 rounded-lg"><Trophy className="h-5 w-5" /></div>
-                    Step 4: Shout BINGO!
-                </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground">
-            When you complete the required pattern (e.g., one line, full house), hit the "BINGO!" button. The system will verify your card. If it's a valid win, you'll be crowned the winner!
-            </AccordionContent>
-        </AccordionItem>
-        </Accordion>
+            <h3 className="mb-2 text-xl font-bold">{step.title}</h3>
+            <p className="text-sm text-muted-foreground">{step.description}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
