@@ -28,44 +28,67 @@ export function BingoCard({ card: flatCard, onMark, calledItems, gridSize, isMyT
     }
   }
 
-  return (
-    <div className={cn(
-      `grid ${gridClasses[gridSize]} bg-primary/10 rounded-lg shadow-inner w-full max-w-md md:max-w-lg`,
-      gridSize > 7 ? "gap-1 p-1" : gridSize > 4 ? "gap-1.5 p-1.5 md:p-2" : "gap-2 p-2 md:p-4"
-    )}>
-      {card.map((row, rowIndex) =>
-        row.map((cell, colIndex) => {
-          const isCalled = calledItems.includes(cell);
-          const isFreeSpace = cell === 'FREE';
-          const isMarked = isCalled || isFreeSpace;
-          
-          const isClickableToCall = isMyTurn && !isCalled && !isFreeSpace;
-          const isDisabled = !isClickableToCall;
+  const cellSize = gridSize >= 9 ? 44 : gridSize >= 7 ? 48 : 56;
+  const gridMinWidth = gridSize * cellSize + (gridSize - 1) * (gridSize > 7 ? 4 : gridSize > 4 ? 6 : 8) + 24;
 
-          return (
-            <button
-              key={`${rowIndex}-${colIndex}`}
-              disabled={isDisabled}
-              onClick={() => onMark(rowIndex, colIndex)}
-              className={cn(
-                "relative flex items-center justify-center aspect-square rounded-md transition-all duration-300 ease-in-out transform font-bold",
-                gridSize <= 3 ? "text-xl md:text-2xl" :      // 3
-                gridSize <= 4 ? "text-lg md:text-xl" :       // 4
-                gridSize <= 6 ? "text-base md:text-lg" :     // 5, 6
-                gridSize <= 8 ? "text-sm md:text-base" :     // 7, 8
-                "text-xs md:text-sm",                         // 9, 10
-                isFreeSpace ? "bg-accent text-accent-foreground" : "bg-card shadow-sm",
-                isMarked && "bg-primary text-primary-foreground scale-95 shadow-inner",
-                isClickableToCall && "cursor-pointer hover:scale-105 hover:ring-2 hover:ring-primary",
-                !isClickableToCall && "cursor-not-allowed",
-                isMarked && !isClickableToCall && "opacity-60"
-              )}
-            >
-              <span className={cn("relative z-10")}>{cell}</span>
-            </button>
-          );
-        })
-      )}
+  return (
+    <div className="w-full overflow-x-auto">
+      <div
+        className={cn(
+          `grid ${gridClasses[gridSize]} rounded-xl border bg-card shadow-sm ring-1 ring-border/60`,
+          gridSize > 7 ? "gap-1 p-2" : gridSize > 4 ? "gap-1.5 p-3" : "gap-2 p-4"
+        )}
+        style={{ minWidth: gridMinWidth }}
+        role="grid"
+        aria-label={`Bingo card ${gridSize} by ${gridSize}`}
+      >
+        {card.map((row, rowIndex) =>
+          row.map((cell, colIndex) => {
+            const isCalled = calledItems.includes(cell);
+            const isFreeSpace = cell === 'FREE';
+            const isMarked = isCalled || isFreeSpace;
+
+            const isClickableToCall = isMyTurn && !isCalled && !isFreeSpace;
+            const isDisabled = !isClickableToCall;
+
+            const label =
+              cell === 'FREE'
+                ? 'Free space'
+                : `${cell}${isCalled ? ', called' : ''}${isMyTurn ? ', tap to call' : ''}`;
+
+            return (
+              <button
+                key={`${rowIndex}-${colIndex}`}
+                disabled={isDisabled}
+                onClick={() => onMark(rowIndex, colIndex)}
+                aria-label={label}
+                aria-disabled={isDisabled}
+                className={cn(
+                  "relative flex items-center justify-center aspect-square select-none rounded-xl border text-center font-extrabold tabular-nums outline-none transition",
+                  "overflow-hidden",
+                  "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  gridSize <= 3 ? "text-xl sm:text-2xl" :
+                  gridSize <= 4 ? "text-lg sm:text-xl" :
+                  gridSize <= 6 ? "text-base sm:text-lg" :
+                  gridSize <= 8 ? "text-sm sm:text-base" :
+                  "text-xs sm:text-sm",
+                  isFreeSpace ? "bg-accent text-accent-foreground" : "bg-background",
+                  isMarked && "bg-primary text-primary-foreground border-primary/60 shadow-inner opacity-100",
+                  isClickableToCall && "cursor-pointer active:scale-[0.98] hover:border-primary/50 hover:ring-1 hover:ring-primary/30",
+                  !isClickableToCall && !isMarked && "cursor-not-allowed opacity-75",
+                  isCalled && "animate-in fade-in-0 zoom-in-95 duration-200"
+                )}
+                style={{ minHeight: cellSize, minWidth: cellSize }}
+                role="gridcell"
+              >
+                <span className="relative z-10 min-w-0 max-w-full px-1 leading-tight [overflow-wrap:anywhere]">
+                  {cell}
+                </span>
+              </button>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }

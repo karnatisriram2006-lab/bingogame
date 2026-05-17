@@ -18,74 +18,66 @@ export function HomePageClient() {
 
   return (
     <div className="flex flex-1 flex-col relative overflow-hidden">
-      <section className="w-full relative">
-        {/* Ambient background glows */}
-        <div className="absolute top-0 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 right-0 translate-x-1/4 -translate-y-1/4 w-[500px] h-[500px] bg-accent/20 rounded-full blur-[120px] pointer-events-none" />
+      <section className="relative min-h-[calc(100svh-10rem)] w-full overflow-hidden">
+        {heroImage && (
+          <Image
+            src={heroImage.imageUrl}
+            alt=""
+            fill
+            sizes="100vw"
+            style={{ objectFit: 'cover' }}
+            data-ai-hint={heroImage.imageHint}
+            priority
+            aria-hidden="true"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/88 via-slate-950/64 to-slate-950/22" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="grid grid-cols-1 items-center gap-12 py-20 md:grid-cols-2 md:py-32">
-            <div className="flex flex-col items-start space-y-8 relative z-20">
+        <div className="container relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] items-center px-4 py-12 sm:py-16">
+            <div className="flex max-w-2xl flex-col items-start space-y-7 text-white">
               <div className="space-y-6">
-                <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary backdrop-blur-md">
+                <div className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-medium text-white backdrop-blur-md">
                   ✨ The ultimate multiplayer experience
                 </div>
-                <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl font-headline bg-gradient-to-br from-foreground via-foreground to-muted-foreground text-transparent bg-clip-text drop-shadow-sm leading-[1.1]">
+                <h1 className="text-4xl font-extrabold tracking-normal sm:text-6xl md:text-7xl font-headline drop-shadow-sm leading-[1.05]">
                   BingoGameGuys
                 </h1>
-                <p className="max-w-[600px] text-muted-foreground text-lg md:text-xl leading-relaxed">
+                <p className="max-w-[600px] text-white/84 text-lg md:text-xl leading-relaxed">
                   Create a room, invite friends, and play real-time bingo in your browser. No downloads, no fuss — just shout BINGO together.
                 </p>
               </div>
               <div className="flex flex-col gap-4 w-full sm:w-auto sm:flex-row">
-                <Button size="lg" onClick={() => setCreateOpen(true)} className="h-14 px-8 text-lg rounded-2xl shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:scale-105 transition-all duration-300">
+                <Button size="lg" onClick={() => setCreateOpen(true)} className="h-14 px-8 text-lg rounded-lg shadow-xl shadow-primary/25 hover:shadow-primary/40">
                   <Ticket className="mr-2 h-5 w-5" /> Create a Room
                 </Button>
-                <Button size="lg" variant="secondary" onClick={() => setJoinOpen(true)} className="h-14 px-8 text-lg rounded-2xl border border-white/10 bg-secondary/50 backdrop-blur-md hover:bg-secondary hover:scale-105 transition-all duration-300">
+                <Button size="lg" variant="secondary" onClick={() => setJoinOpen(true)} className="h-14 px-8 text-lg rounded-lg border border-white/20 bg-white/90 text-foreground backdrop-blur-md hover:bg-white">
                   <Users className="mr-2 h-5 w-5" /> Join a Room
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80">
                 <span className="inline-flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary/70" aria-hidden="true" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
                   Free to play
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary/70" aria-hidden="true" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
                   Works on mobile
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary/70" aria-hidden="true" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
                   Real-time rooms
                 </span>
               </div>
               <div>
                 <Link
                   href="#how-to-play"
-                  className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  className="text-sm font-medium text-white underline-offset-4 hover:underline"
                 >
                   Learn how it works
                 </Link>
               </div>
             </div>
-            
-            <div className="relative h-80 w-full overflow-hidden rounded-[2rem] shadow-2xl border border-white/10 md:h-[500px] group">
-              {heroImage && (
-                <Image
-                  src={heroImage.imageUrl}
-                  alt={heroImage.description}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  style={{ objectFit: 'cover' }}
-                  data-ai-hint={heroImage.imageHint}
-                  priority
-                  className="transition-transform duration-1000 group-hover:scale-105"
-                />
-              )}
-               <div className="absolute inset-0 bg-gradient-to-tr from-background/90 via-background/20 to-transparent pointer-events-none" />
-               <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[2rem] pointer-events-none" />
-            </div>
-          </div>
         </div>
       </section>
 
@@ -117,6 +109,31 @@ export function HomePageClient() {
           <JoinRoomForm onRoomJoined={() => setJoinOpen(false)} />
         </DialogContent>
       </Dialog>
+
+      {!isCreateOpen && !isJoinOpen && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 sm:hidden pb-safe">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+          <div className="relative pointer-events-auto border-t border-border/60 bg-background/85 backdrop-blur px-4 py-3">
+            <div className="mx-auto flex max-w-md gap-3">
+              <Button
+                size="lg"
+                onClick={() => setCreateOpen(true)}
+                className="h-12 flex-1 rounded-lg shadow-lg shadow-primary/20"
+              >
+                <Ticket className="mr-2 h-5 w-5" /> Create
+              </Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={() => setJoinOpen(true)}
+                className="h-12 flex-1 rounded-lg border bg-secondary/60 backdrop-blur"
+              >
+                <Users className="mr-2 h-5 w-5" /> Join
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

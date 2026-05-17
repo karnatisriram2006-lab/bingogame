@@ -11,6 +11,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Send } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface ChatProps {
     roomId: string;
@@ -53,30 +54,48 @@ export function Chat({ roomId, messages }: ChatProps) {
     };
 
     return (
-        <div className="flex flex-col h-full">
-            <h3 className="text-lg font-bold mb-4">Chat</h3>
-            <ScrollArea className="flex-1 mb-4 pr-4" ref={scrollAreaRef}>
+        <div className="flex h-full min-h-0 flex-col">
+            <div className="mb-4 flex items-center justify-between gap-3">
+                <h3 className="text-base font-bold">Chat</h3>
+                <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground">
+                    {messages?.length || 0}
+                </span>
+            </div>
+            <ScrollArea className="mb-4 flex-1 pr-3" ref={scrollAreaRef}>
                 <div className="space-y-4 text-sm">
                 {messages && messages.length > 0 ? (
-                    messages.map((msg) => (
-                    <div key={msg.id} className="flex items-start gap-3">
-                        <Avatar className="h-8 w-8">
+                    messages.map((msg) => {
+                    const isMine = msg.senderId === user?.uid;
+
+                    return (
+                    <div key={msg.id} className={cn("flex items-start gap-3", isMine && "flex-row-reverse")}>
+                        <Avatar className="h-8 w-8 shrink-0">
                         <AvatarImage src={`https://api.dicebear.com/8.x/initials/svg?seed=${msg.senderName}`} />
                         <AvatarFallback>{msg.senderName.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <div className="flex-1">
-                            <div className="flex items-baseline gap-2">
+                        <div className={cn("min-w-0 flex-1", isMine && "text-right")}>
+                            <div className={cn("flex items-baseline gap-2", isMine && "justify-end")}>
                                 <p className="font-semibold">{msg.senderName}</p>
                                 <p className="text-xs text-muted-foreground">
                                     {msg.timestamp?.toDate ? formatDistanceToNow(msg.timestamp.toDate(), { addSuffix: true }) : 'sending...'}
                                 </p>
                             </div>
-                        <p className="text-muted-foreground break-words">{msg.text}</p>
+                        <p
+                            className={cn(
+                                "mt-1 inline-block max-w-full rounded-lg px-3 py-2 text-left leading-relaxed shadow-sm [overflow-wrap:anywhere]",
+                                isMine
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-secondary/70 text-secondary-foreground"
+                            )}
+                        >
+                            {msg.text}
+                        </p>
                         </div>
                     </div>
-                    ))
+                    );
+                    })
                 ) : (
-                    <div className="text-muted-foreground text-center p-4">No messages yet. Say hello!</div>
+                    <div className="rounded-lg border border-dashed bg-background/60 p-4 text-center text-muted-foreground">No messages yet. Say hello!</div>
                 )}
                 </div>
             </ScrollArea>
@@ -86,8 +105,9 @@ export function Chat({ roomId, messages }: ChatProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 disabled={!user}
+                className="h-11"
                 />
-                <Button type="submit" size="icon" disabled={!user || !message.trim()}>
+                <Button type="submit" size="icon" className="h-11 w-11" disabled={!user || !message.trim()}>
                 <Send className="h-4 w-4" />
                 </Button>
             </form>

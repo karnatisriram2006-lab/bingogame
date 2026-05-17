@@ -14,7 +14,7 @@ import { CalledItems } from '@/components/called-items';
 import { Button } from '@/components/ui/button';
 import { WinnerPopup } from '@/components/winner-popup';
 import { checkWin, generateBingoCard, generateGameItems } from '@/lib/bingo-logic';
-import { Loader2, Copy } from 'lucide-react';
+import { Hash, Loader2, Copy, Users } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Chat } from './chat';
 import { cn } from '@/lib/utils';
@@ -274,27 +274,49 @@ export function GameClient({ roomId }: { roomId: string }) {
   const winner = room.winnerId ? room.players[room.winnerId] : null;
 
   return (
-    <div className="container mx-auto p-4 lg:p-6">
+    <div className="container mx-auto p-4 pb-28 lg:p-6 lg:pb-6">
        {room.status === 'finished' && winner && (
         <WinnerPopup winner={winner} isHost={user?.uid === room.hostId} onPlayAgain={handlePlayAgain} />
       )}
+      <div className="mb-4 flex flex-col gap-3 rounded-lg border bg-card/85 p-3 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Hash className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Room</p>
+            <p className="font-mono text-xl font-black tracking-widest text-primary">{room.code}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex h-10 items-center gap-2 rounded-lg border bg-background px-3 text-sm font-medium">
+            <Users className="h-4 w-4 text-muted-foreground" />
+            {Object.keys(room.players).length}
+          </div>
+          <Button variant="outline" className="h-10 flex-1 sm:flex-none" onClick={copyLink}>
+            <Copy className="mr-2 h-4 w-4" /> Share
+          </Button>
+        </div>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <aside className="lg:col-span-1 order-2 lg:order-1 rounded-lg bg-card p-4 shadow-sm">
+        <aside className="lg:col-span-1 order-2 lg:order-1 rounded-lg border bg-card/85 p-4 shadow-sm backdrop-blur">
           <CalledItems items={room.calledItems} />
         </aside>
 
         <main className="lg:col-span-2 order-1 lg:order-2 flex flex-col items-center gap-4">
-          <div className="text-center">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Called</h2>
-            <p className="text-5xl md:text-7xl font-black text-primary animate-pulse">{room.currentItem || '...'}</p>
+          <div className="w-full max-w-lg rounded-lg border bg-card/85 p-4 text-center shadow-sm backdrop-blur">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Called</h2>
+            <p className="mt-2 text-5xl md:text-7xl font-black text-primary">
+              {room.currentItem || '…'}
+            </p>
           </div>
 
           {room.status === 'playing' && room.currentPlayerTurn && (
               <div className={cn(
-                "text-center w-full max-w-md p-3 rounded-lg transition-colors duration-300",
+                "text-center w-full max-w-lg p-3 rounded-lg border transition-colors duration-300",
                 user?.uid === room.currentPlayerTurn 
-                    ? 'bg-accent animate-pulse' 
-                    : 'bg-secondary/50'
+                    ? 'bg-accent/80 border-accent/40' 
+                    : 'bg-secondary/40 border-border/60'
               )}>
                   <p className={cn(
                       "font-bold text-lg",
@@ -307,14 +329,14 @@ export function GameClient({ roomId }: { roomId: string }) {
           
           {currentPlayer && <BingoCard card={currentPlayer.card} onMark={handleCellClick} calledItems={room.calledItems} gridSize={room.gridSize} isMyTurn={user?.uid === room.currentPlayerTurn} />}
           
-          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+          <div className="hidden sm:flex flex-col sm:flex-row gap-4 w-full justify-center">
             <Button size="lg" variant="destructive" onClick={handleBingo} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg" disabled={room.status === 'finished'}>
-                BINGO!
+              BINGO!
             </Button>
           </div>
         </main>
         
-        <aside className="lg:col-span-1 order-3 rounded-lg bg-card p-4 shadow-sm flex flex-col gap-4">
+        <aside className="lg:col-span-1 order-3 rounded-lg border bg-card/85 p-4 shadow-sm backdrop-blur flex flex-col gap-4">
             <div>
                 <h3 className="text-lg font-bold mb-4">Players</h3>
                 <PlayerList players={Object.values(room.players)} currentPlayerTurnId={room.currentPlayerTurn} />
@@ -328,6 +350,30 @@ export function GameClient({ roomId }: { roomId: string }) {
                 <Chat roomId={roomId} messages={room.messages} />
             </div>
         </aside>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 bg-background/85 backdrop-blur sm:hidden pb-safe">
+        <div className="container mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Status</p>
+            <p className="truncate text-sm font-medium">
+              {room.currentPlayerTurn
+                ? user?.uid === room.currentPlayerTurn
+                  ? "Your turn to call"
+                  : `Waiting for ${room.players[room.currentPlayerTurn]?.name || 'player'}`
+                : "Game in progress"}
+            </p>
+          </div>
+          <Button
+            size="lg"
+            variant="destructive"
+            onClick={handleBingo}
+            className="h-12 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg"
+            disabled={room.status === 'finished'}
+          >
+            BINGO!
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -4,10 +4,10 @@ import { Users, Ticket, CheckCircle, Trophy } from 'lucide-react';
 export function HowToPlay() {
   return (
     <div className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-8">How to Play</h2>
+        <h2 className="text-2xl font-bold tracking-tighter sm:text-4xl mb-6 sm:mb-8">How to Play</h2>
         <Accordion type="single" collapsible className="w-full text-left">
         <AccordionItem value="item-1">
-            <AccordionTrigger className="text-lg font-semibold">
+            <AccordionTrigger className="text-base sm:text-lg font-semibold">
             <div className="flex items-center gap-3">
                 <div className="bg-primary/10 text-primary p-2 rounded-lg"><Users className="h-5 w-5" /></div>
                 Step 1: Create or Join a Room
@@ -18,7 +18,7 @@ export function HowToPlay() {
             </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
-            <AccordionTrigger className="text-lg font-semibold">
+            <AccordionTrigger className="text-base sm:text-lg font-semibold">
             <div className="flex items-center gap-3">
                 <div className="bg-primary/10 text-primary p-2 rounded-lg"><Ticket className="h-5 w-5" /></div>
                 Step 2: Get Your Bingo Card
@@ -29,7 +29,7 @@ export function HowToPlay() {
             </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
-            <AccordionTrigger className="text-lg font-semibold">
+            <AccordionTrigger className="text-base sm:text-lg font-semibold">
             <div className="flex items-center gap-3">
                 <div className="bg-primary/10 text-primary p-2 rounded-lg"><CheckCircle className="h-5 w-5" /></div>
                 Step 3: Mark Your Card
@@ -40,7 +40,7 @@ export function HowToPlay() {
             </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-4">
-            <AccordionTrigger className="text-lg font-semibold">
+            <AccordionTrigger className="text-base sm:text-lg font-semibold">
                 <div className="flex items-center gap-3">
                     <div className="bg-primary/10 text-primary p-2 rounded-lg"><Trophy className="h-5 w-5" /></div>
                     Step 4: Shout BINGO!

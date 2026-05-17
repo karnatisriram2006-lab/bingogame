@@ -81,7 +81,7 @@ export function JoinRoomForm({ onRoomJoined }: JoinRoomFormProps) {
   }
 
   return (
-    <form onSubmit={handleJoinRoom} className="grid gap-4">
+    <form onSubmit={handleJoinRoom} className="grid gap-5">
       <div className="space-y-2">
         <Label htmlFor="room-code">Room Code</Label>
         <Input
@@ -89,12 +89,12 @@ export function JoinRoomForm({ onRoomJoined }: JoinRoomFormProps) {
           placeholder="ABCDE"
           value={roomCode}
           onChange={(e) => setRoomCode(e.target.value)}
-          className="uppercase"
+          className="h-12 text-center font-mono text-xl font-black uppercase tracking-[0.24em]"
           maxLength={5}
           required
         />
       </div>
-      <Button type="submit" disabled={loading || roomCode.length < 5}>
+      <Button type="submit" className="h-11 rounded-lg" disabled={loading || roomCode.length < 5}>
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Join Room
       </Button>
