@@ -17,15 +17,21 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] rounded-xl bg-background px-4 py-2 text-sm font-medium shadow-lg ring-1 ring-border"
+      >
+        Skip to content
+      </a>
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <Icons.Logo className="h-6 w-6 text-primary" />
-          <span className="font-bold sm:inline-block">
+          <span className="font-bold sm:inline-block text-lg tracking-tight bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text">
             BingoGameGuys
           </span>
         </Link>
         <div className="flex flex-1 items-center justify-end">
-          <nav className="flex items-center">
+          <nav className="flex items-center" aria-label="Primary">
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

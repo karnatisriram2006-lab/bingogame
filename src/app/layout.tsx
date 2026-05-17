@@ -1,22 +1,20 @@
 import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/header';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import Script from 'next/script';
+import { OG_IMAGE, SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, SITE_TITLE, SITE_URL } from '@/lib/site';
 
 /* ─────────────────────────────────────────────
    Site-wide constants (single source of truth)
 ───────────────────────────────────────────── */
-const SITE_URL = 'https://bingogameguys.vercel.app';
-const SITE_NAME = 'BingoGameGuys';
-const SITE_TITLE = 'BingoGameGuys – Free Online Bingo Game | Play With Friends';
-const SITE_DESCRIPTION =
-  'Play real-time multiplayer bingo online with friends at BingoGameGuys. Create custom rooms, generate cards, and get ready to shout BINGO!';
-const SITE_KEYWORDS =
-  'bingo game, online bingo, free bingo, multiplayer bingo, play bingo with friends, bingo room, bingo card generator, BingoGameGuys, real-time bingo';
-const OG_IMAGE = `${SITE_URL}/og-image.png`;
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 /* ─────────────────────────────────────────────
    Viewport (responsive + PWA-ready)
@@ -60,7 +58,6 @@ export const metadata: Metadata = {
       { url: '/favicon.ico', sizes: 'any' },
       { url: '/icon.svg', type: 'image/svg+xml' },
     ],
-    apple: '/apple-touch-icon.png',
     shortcut: '/favicon.ico',
   },
 
@@ -197,14 +194,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="1oug0Qa_XpVqez1KCDsVTONP6qQ4MdOXpFjr63mEwwc" />
-        {/* Google Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
-          rel="stylesheet"
-        />
-
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
@@ -219,7 +208,7 @@ export default function RootLayout({
           }) }}
         />
       </head>
-      <body className="font-body antialiased">
+      <body className={`${inter.variable} font-body antialiased`}>
         <Providers>
           <div className="relative flex min-h-screen w-full flex-col">
             <Header />
