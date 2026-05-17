@@ -5,6 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
+      disallow: '/room/',
     },
     sitemap: 'https://bingogameguys.vercel.app/sitemap.xml',
   };

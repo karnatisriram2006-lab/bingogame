@@ -72,7 +72,7 @@ const nextConfig: NextConfig = {
       },
       {
         // Static files (images, fonts, manifests, icons)
-        source: '/(.*)\\.(png|jpg|jpeg|webp|avif|gif|svg|ico|woff|woff2|ttf|otf|json|txt|xml)',
+        source: '/(.*)\\.(png|jpg|jpeg|webp|avif|gif|svg|ico|woff|woff2|ttf|otf)',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
