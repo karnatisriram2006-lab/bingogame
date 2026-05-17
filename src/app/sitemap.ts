@@ -10,13 +10,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1.0,
     },
-    // Add more public routes here as your app grows
-    // Example:
-    // {
-    //   url: `${SITE_URL}/how-to-play`,
-    //   lastModified: new Date(),
-    //   changeFrequency: 'monthly',
-    //   priority: 0.8,
-    // },
   ];
 }

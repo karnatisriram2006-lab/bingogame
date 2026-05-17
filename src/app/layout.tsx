@@ -10,12 +10,12 @@ import Script from 'next/script';
    Site-wide constants (single source of truth)
 ───────────────────────────────────────────── */
 const SITE_URL = 'https://bingogameguys.vercel.app';
-const SITE_NAME = 'BingoBlitz';
-const SITE_TITLE = 'BingoBlitz – Free Online Bingo Game | Play With Friends';
+const SITE_NAME = 'BingoGameGuys';
+const SITE_TITLE = 'BingoGameGuys – Free Online Bingo Game | Play With Friends';
 const SITE_DESCRIPTION =
-  'Play real-time Bingo online for free! Create custom rooms, invite friends, generate unique bingo cards, and shout BINGO together. No download needed — just fun!';
+  'Play real-time multiplayer bingo online with friends at BingoGameGuys. Create custom rooms, generate cards, and get ready to shout BINGO!';
 const SITE_KEYWORDS =
-  'bingo game, online bingo, free bingo, multiplayer bingo, play bingo with friends, bingo room, bingo card generator, BingoBlitz, real-time bingo';
+  'bingo game, online bingo, free bingo, multiplayer bingo, play bingo with friends, bingo room, bingo card generator, BingoGameGuys, real-time bingo';
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 /* ─────────────────────────────────────────────
@@ -43,9 +43,9 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   keywords: SITE_KEYWORDS,
-  authors: [{ name: 'Sriram', url: SITE_URL }],
-  creator: 'Sriram',
-  publisher: 'BingoBlitz',
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   category: 'game',
   applicationName: SITE_NAME,
 
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'BingoBlitz – Free Online Multiplayer Bingo Game',
+        alt: `${SITE_NAME} – Free Online Multiplayer Bingo Game`,
         type: 'image/png',
       },
     ],
@@ -89,8 +89,8 @@ export const metadata: Metadata = {
   /* ── Twitter / X Card ── */
   twitter: {
     card: 'summary_large_image',
-    site: '@bingoblitz',
-    creator: '@bingoblitz',
+    site: '@bingogameguys',
+    creator: '@bingogameguys',
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [OG_IMAGE],
@@ -129,6 +129,9 @@ const websiteStructuredData = {
   name: SITE_NAME,
   url: SITE_URL,
   description: SITE_DESCRIPTION,
+  publisher: {
+    '@id': `${SITE_URL}#organization`
+  },
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -142,21 +145,22 @@ const websiteStructuredData = {
 const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${SITE_URL}#organization`,
   name: SITE_NAME,
   url: SITE_URL,
   logo: {
     '@type': 'ImageObject',
-    url: `${SITE_URL}/logo.png`,
+    url: `${SITE_URL}/og-image.png`,
   },
   sameAs: [
     // Add your social profile URLs here
-    // 'https://twitter.com/bingoblitz',
   ],
 };
 
 const webApplicationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
+  '@id': `${SITE_URL}#webapp`,
   name: SITE_NAME,
   url: SITE_URL,
   description: SITE_DESCRIPTION,
@@ -168,6 +172,17 @@ const webApplicationStructuredData = {
     priceCurrency: 'USD',
   },
   browserRequirements: 'Requires JavaScript. Requires HTML5.',
+};
+
+const webPageStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${SITE_URL}#webpage`,
+  url: SITE_URL,
+  name: SITE_TITLE,
+  isPartOf: {
+    '@id': `${SITE_URL}#website`
+  }
 };
 
 /* ─────────────────────────────────────────────
@@ -193,15 +208,15 @@ export default function RootLayout({
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationStructuredData) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationStructuredData) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              websiteStructuredData,
+              organizationStructuredData,
+              webApplicationStructuredData,
+              webPageStructuredData
+            ]
+          }) }}
         />
       </head>
       <body className="font-body antialiased">
@@ -214,7 +229,7 @@ export default function RootLayout({
             <footer role="contentinfo" aria-label="Site footer" className="py-6 md:px-8 md:py-0">
               <div className="container flex flex-col items-center justify-center gap-4 md:h-24 md:flex-row">
                 <p className="text-center text-sm leading-loose text-muted-foreground">
-                  &copy; {new Date().getFullYear()} BingoBlitz — Created by Sriram. Free online bingo game.
+                  &copy; {new Date().getFullYear()} BingoGameGuys — Created by Sriram. Free online bingo game.
                 </p>
               </div>
             </footer>

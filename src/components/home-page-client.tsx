@@ -22,10 +22,10 @@ export function HomePageClient() {
           <div className="grid grid-cols-1 items-center gap-12 py-12 md:grid-cols-2 md:py-24">
             <div className="flex flex-col items-start space-y-6">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl font-headline bg-gradient-to-r from-primary to-purple-500 text-transparent bg-clip-text">
-                Welcome to BingoBlitz
+                BingoGameGuys
               </h1>
               <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                The ultimate online bingo experience. Create a room, invite your friends, and get ready to shout BINGO!
+                Play real-time multiplayer bingo online with friends.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Button size="lg" onClick={() => setCreateOpen(true)} className="shadow-lg shadow-primary/20">

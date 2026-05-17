@@ -1,4 +1,4 @@
-# **App Name**: BingoBlitz
+# **App Name**: BingoGameGuys
 
 ## Core Features:
 

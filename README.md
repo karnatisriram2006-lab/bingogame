@@ -1,4 +1,4 @@
-# BingoBlitz
+# BingoGameGuys
 
 This is a Next.js application for playing Bingo online with friends, built with Firebase.
 
